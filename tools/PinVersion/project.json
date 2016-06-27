@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true
@@ -8,6 +8,6 @@
     "NuGet.Protocol.Core.v3": "3.5.0-beta-final"
   },
   "frameworks": {
-    "net451": { }
+    "net451": {}
   }
 }
