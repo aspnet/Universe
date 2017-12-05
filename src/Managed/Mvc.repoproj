@@ -1,0 +1,37 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\Mvc\</RepositoryRoot>
+    <UseBuildCache>False</UseBuildCache>
+    <IsFinalBuild>False</IsFinalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="Antiforgery.repoproj" />
+    <ProjectReference Include="Caching.repoproj" />
+    <ProjectReference Include="Common.repoproj" />
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="CORS.repoproj" />
+    <ProjectReference Include="DependencyInjection.repoproj" />
+    <ProjectReference Include="Diagnostics.repoproj" />
+    <ProjectReference Include="DotNetTools.repoproj" />
+    <ProjectReference Include="EventNotification.repoproj" />
+    <ProjectReference Include="FileSystem.repoproj" />
+    <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="HtmlAbstractions.repoproj" />
+    <ProjectReference Include="HttpAbstractions.repoproj" />
+    <ProjectReference Include="IISIntegration.repoproj" />
+    <ProjectReference Include="JsonPatch.repoproj" />
+    <ProjectReference Include="KestrelHttpServer.repoproj" />
+    <ProjectReference Include="Localization.repoproj" />
+    <ProjectReference Include="Logging.repoproj" />
+    <ProjectReference Include="Options.repoproj" />
+    <ProjectReference Include="Razor.repoproj" />
+    <ProjectReference Include="ResponseCaching.repoproj" />
+    <ProjectReference Include="Routing.repoproj" />
+    <ProjectReference Include="Security.repoproj" />
+    <ProjectReference Include="Session.repoproj" />
+    <ProjectReference Include="StaticFiles.repoproj" />
+    <ProjectReference Include="Testing.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

@@ -31,6 +31,9 @@ namespace RepoTasks
         public ITaskItem[] Solutions { get; set; }
 
         [Required]
+        public ITaskItem[] Artifacts { get; set; }
+
+        [Required]
         public ITaskItem[] Repositories { get; set; }
 
         [Required]
@@ -46,6 +49,11 @@ namespace RepoTasks
 
         public override bool Execute()
         {
+            var packageArtifacts = Artifacts.Select(ArtifactInfo.Parse)
+                .OfType<ArtifactInfo.Package>()
+                .Where(p => !p.IsSymbolsArtifact)
+                .ToDictionary(p => p.PackageInfo.Id, p => p, StringComparer.OrdinalIgnoreCase);
+
             var factory = new SolutionInfoFactory(Log, BuildEngine5);
             var props = MSBuildListSplitter.GetNamedProperties(Properties);
 
@@ -90,6 +98,25 @@ namespace RepoTasks
 
                     packageToProjectMap.Add(id, proj);
                 }
+
+                var sharedSrc = Path.Combine(sln.Directory, "shared");
+                if (Directory.Exists(sharedSrc))
+                {
+                    foreach (var dir in Directory.GetDirectories(sharedSrc, "*.Sources"))
+                    {
+                        var id = Path.GetFileName(dir);
+                        var artifactInfo = packageArtifacts[id];
+                        var sharedSrcProj = new ProjectInfo(dir,
+                            Array.Empty<ProjectFrameworkInfo>(),
+                            Array.Empty<DotNetCliReferenceInfo>(),
+                            true,
+                            artifactInfo.PackageInfo.Id,
+                            artifactInfo.PackageInfo.Version.ToNormalizedString());
+                        sharedSrcProj.SolutionInfo = sln;
+                        var identity = new PackageIdentity(artifactInfo.PackageInfo.Id, artifactInfo.PackageInfo.Version);
+                        packageToProjectMap.Add(identity, sharedSrcProj);
+                    }
+                }
             }
 
             if (Log.HasLoggedErrors)
@@ -114,6 +141,19 @@ namespace RepoTasks
                         repoGraph.SetLink(i, j);
                     }
                 }
+
+                var toolDeps = from proj in sln.Projects
+                               from tool in proj.Tools
+                               select tool;
+
+                foreach (var toolDep in toolDeps)
+                {
+                    if (packageToProjectMap.TryGetValue(new PackageIdentity(toolDep.Id, new NuGetVersion(toolDep.Version)), out var target))
+                    {
+                        var j = repoGraph.FindIndex(target.SolutionInfo);
+                        repoGraph.SetLink(i, j);
+                    }
+                }
             }
 
             CreateDgml(repoGraph);
@@ -132,8 +172,8 @@ namespace RepoTasks
             for (var i = 0; i < slnGraph.Count; i++)
             {
                 var sln = slnGraph[i];
-                var dest = Path.Combine(root, Path.GetFileNameWithoutExtension(sln.FullPath) + ".repoproj");
                 var repoName = Path.GetFileName(sln.Directory);
+                var dest = Path.Combine(root, repoName + ".repoproj");
                 var repo = repos[repoName];
                 var repoRootRelative = Path.GetRelativePath(Path.GetDirectoryName(dest), sln.Directory);
                 var repoproj = new RepositoryProject(repoRootRelative);
@@ -141,15 +181,17 @@ namespace RepoTasks
                 bool.TryParse(repo.GetMetadata("UseBuildCache"), out var useBuildCache);
                 repoproj.AddProperty("UseBuildCache", useBuildCache.ToString());
 
+                bool.TryParse(repo.GetMetadata("IsFinalBuild"), out var isFinalBuild);
+                repoproj.AddProperty("IsFinalBuild", isFinalBuild.ToString());
+
                 for (var j = 0; j < slnGraph.Count; j++)
                 {
                     if (j == i) continue;
                     if (slnGraph.HasLink(i, j))
                     {
                         var target = slnGraph[j];
-                        var targetSlnProj = Path.GetFileNameWithoutExtension(target.FullPath) + ".repoproj";
-
                         var targetRepoName = Path.GetFileName(target.Directory);
+                        var targetSlnProj = targetRepoName + ".repoproj";
                         var targetRepo = repos[targetRepoName];
 
                         if (useBuildCache && bool.TryParse(targetRepo.GetMetadata("UseBuildCache"), out var targetUseBuildCache) && !targetUseBuildCache)

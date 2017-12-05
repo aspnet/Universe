@@ -1,0 +1,27 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\Security\</RepositoryRoot>
+    <UseBuildCache>False</UseBuildCache>
+    <IsFinalBuild>False</IsFinalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="Caching.repoproj" />
+    <ProjectReference Include="Common.repoproj" />
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="DataProtection.repoproj" />
+    <ProjectReference Include="DependencyInjection.repoproj" />
+    <ProjectReference Include="Diagnostics.repoproj" />
+    <ProjectReference Include="FileSystem.repoproj" />
+    <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="HtmlAbstractions.repoproj" />
+    <ProjectReference Include="HttpAbstractions.repoproj" />
+    <ProjectReference Include="IISIntegration.repoproj" />
+    <ProjectReference Include="KestrelHttpServer.repoproj" />
+    <ProjectReference Include="Logging.repoproj" />
+    <ProjectReference Include="Options.repoproj" />
+    <ProjectReference Include="StaticFiles.repoproj" />
+    <ProjectReference Include="Testing.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

@@ -6,11 +6,12 @@ They are meant to be used by developers to update the ASP.NET Core configuration
 -->
 <Project>
 
-  <!-- Generates kproj files for each KoreBuild project -->
-  <Target Name="GenerateSubmoduleProjects" DependsOnTargets="GeneratePropsFiles">
+  <!-- Generates repoproj files for each KoreBuild project -->
+  <Target Name="GenerateSubmoduleProjects" DependsOnTargets="ResolveRepoInfo;GeneratePropsFiles">
 
     <RepoTasks.GenerateSubmoduleProjects
       Solutions="@(Solution)"
+      Artifacts="@(ArtifactInfo)"
       Repositories="@(Repository)"
       RepositoryRoot="$(RepositoryRoot)"
       Properties="Configuration=$(Configuration);BuildNumber=$(BuildNumber);DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath)" />

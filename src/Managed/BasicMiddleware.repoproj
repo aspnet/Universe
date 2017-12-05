@@ -1,0 +1,18 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\BasicMiddleware\</RepositoryRoot>
+    <UseBuildCache>False</UseBuildCache>
+    <IsFinalBuild>False</IsFinalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="FileSystem.repoproj" />
+    <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="HttpAbstractions.repoproj" />
+    <ProjectReference Include="KestrelHttpServer.repoproj" />
+    <ProjectReference Include="Logging.repoproj" />
+    <ProjectReference Include="Options.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

@@ -1,0 +1,19 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\JavaScriptServices\</RepositoryRoot>
+    <UseBuildCache>False</UseBuildCache>
+    <IsFinalBuild>False</IsFinalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="DependencyInjection.repoproj" />
+    <ProjectReference Include="Diagnostics.repoproj" />
+    <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="IISIntegration.repoproj" />
+    <ProjectReference Include="KestrelHttpServer.repoproj" />
+    <ProjectReference Include="Logging.repoproj" />
+    <ProjectReference Include="Mvc.repoproj" />
+    <ProjectReference Include="StaticFiles.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

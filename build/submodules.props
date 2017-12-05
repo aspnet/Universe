@@ -2,6 +2,7 @@
   <ItemDefinitionGroup>
     <Repository>
       <UseBuildCache>false</UseBuildCache>
+      <IsFinalBuild>false</IsFinalBuild>
     </Repository>
   </ItemDefinitionGroup>
 
@@ -43,18 +44,18 @@
       Build tools will *verify* that these repos will be unaffected
       by the patch update and do not need updating.
     -->
-    <Repository Include="Caching" UseBuildCache="true" />
-    <Repository Include="Common" UseBuildCache="true" />
-    <Repository Include="Configuration" UseBuildCache="true" />
-    <Repository Include="DependencyInjection" UseBuildCache="true" />
-    <Repository Include="DotNetTools" UseBuildCache="true" />
-    <Repository Include="EventNotification" UseBuildCache="true" />
-    <Repository Include="FileSystem" UseBuildCache="true" />
-    <Repository Include="HtmlAbstractions" UseBuildCache="true" />
-    <Repository Include="JsonPatch" UseBuildCache="true" />
-    <Repository Include="Logging" UseBuildCache="true" />
-    <Repository Include="Microsoft.Data.Sqlite" UseBuildCache="true" />
-    <Repository Include="Options" UseBuildCache="true" />
-    <Repository Include="Testing" UseBuildCache="true" />
+    <Repository Include="Caching" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="Common" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="Configuration" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="DependencyInjection" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="DotNetTools" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="EventNotification" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="FileSystem" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="HtmlAbstractions" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="JsonPatch" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="Logging" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="Microsoft.Data.Sqlite" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="Options" UseBuildCache="true" IsFinalBuild="true" />
+    <Repository Include="Testing" UseBuildCache="true" IsFinalBuild="true" />
   </ItemGroup>
 </Project>

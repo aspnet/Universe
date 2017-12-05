@@ -1,0 +1,15 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\Logging\</RepositoryRoot>
+    <UseBuildCache>True</UseBuildCache>
+    <IsFinalBuild>True</IsFinalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="DependencyInjection.repoproj" />
+    <ProjectReference Include="FileSystem.repoproj" />
+    <ProjectReference Include="Options.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

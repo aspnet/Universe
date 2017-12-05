@@ -1,0 +1,17 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\Proxy\</RepositoryRoot>
+    <UseBuildCache>False</UseBuildCache>
+    <IsFinalBuild>False</IsFinalBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="IISIntegration.repoproj" />
+    <ProjectReference Include="KestrelHttpServer.repoproj" />
+    <ProjectReference Include="Options.repoproj" />
+    <ProjectReference Include="Testing.repoproj" />
+    <ProjectReference Include="WebSockets.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>
