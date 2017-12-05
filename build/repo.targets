@@ -5,6 +5,7 @@
   <Import Project="PackageArchive.targets" />
   <Import Project="Templating.targets" />
   <Import Project="push.targets" />
+  <Import Project="GenerateCode.targets" />
 
   <PropertyGroup>
     <SubmoduleRoot>$(RepositoryRoot)modules\</SubmoduleRoot>
@@ -87,7 +88,6 @@
 
     <ItemGroup>
       <Repository Update="%(Identity)" RootPath="$(SubmoduleRoot)%(Identity)\" />
-      <ShippedRepository Update="%(Identity)" RootPath="$(SubmoduleRoot)%(Identity)\" />
     </ItemGroup>
   </Target>
 
@@ -97,38 +97,21 @@
   <Target Name="ResolveRepoInfo" DependsOnTargets="_PrepareRepositories">
 
     <Error Text="%(Repository.RootPath) does not exist. Did you forget to clone the submodules? Run `git submodules update`." Condition="!Exists(%(Repository.RootPath))" />
-    <Error Text="%(ShippedRepository.RootPath) does not exist. Did you forget to clone the submodules? Run `git submodules update`." Condition="!Exists(%(ShippedRepository.RootPath))" />
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetArtifactInfo"
-             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
+             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=%(Repository.UseBuildCache)"
              ContinueOnError="WarnAndContinue">
       <Output TaskParameter="TargetOutputs" ItemName="ArtifactInfo" />
     </MSBuild>
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="ResolveSolutions"
-             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
+             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=%(Repository.UseBuildCache)"
              ContinueOnError="WarnAndContinue">
       <Output TaskParameter="TargetOutputs" ItemName="Solution" />
     </MSBuild>
 
-    <!--
-      Analyze what was shipped in these repos.
-      This is required so we can verify that cascading versions are consistent.
-    -->
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="GetArtifactInfo"
-             Properties="RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=true"
-             ContinueOnError="WarnAndContinue">
-      <Output TaskParameter="TargetOutputs" ItemName="ShippedArtifactInfo" />
-    </MSBuild>
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="ResolveSolutions"
-             Properties="RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
-             ContinueOnError="WarnAndContinue">
-      <Output TaskParameter="TargetOutputs" ItemName="_NoBuildSolution" />
-    </MSBuild>
 
     <ItemGroup>
       <Solution Update="@(Solution)" Build="true" />

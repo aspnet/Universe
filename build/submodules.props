@@ -1,4 +1,10 @@
 <Project>
+  <ItemDefinitionGroup>
+    <Repository>
+      <UseBuildCache>false</UseBuildCache>
+    </Repository>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <!-- Repos being patched -->
     <Repository Include="Antiforgery" />
@@ -32,22 +38,23 @@
     <Repository Include="WebSockets" />
 
     <!--
-    Repos not building this patch.
-    Build tools will *verify* that these repos will be unaffected
-    by the patch update and do not need updating.
+      Repos not building this patch.
+      Build tools will attempt to pull artifacts from the configured build cache.
+      Build tools will *verify* that these repos will be unaffected
+      by the patch update and do not need updating.
     -->
-    <ShippedRepository Include="Caching" />
-    <ShippedRepository Include="Common" />
-    <ShippedRepository Include="Configuration" />
-    <ShippedRepository Include="DependencyInjection" />
-    <ShippedRepository Include="DotNetTools" />
-    <ShippedRepository Include="EventNotification" />
-    <ShippedRepository Include="FileSystem" />
-    <ShippedRepository Include="HtmlAbstractions" />
-    <ShippedRepository Include="JsonPatch" />
-    <ShippedRepository Include="Logging" />
-    <ShippedRepository Include="Microsoft.Data.Sqlite" />
-    <ShippedRepository Include="Options" />
-    <ShippedRepository Include="Testing" />
+    <Repository Include="Caching" UseBuildCache="true" />
+    <Repository Include="Common" UseBuildCache="true" />
+    <Repository Include="Configuration" UseBuildCache="true" />
+    <Repository Include="DependencyInjection" UseBuildCache="true" />
+    <Repository Include="DotNetTools" UseBuildCache="true" />
+    <Repository Include="EventNotification" UseBuildCache="true" />
+    <Repository Include="FileSystem" UseBuildCache="true" />
+    <Repository Include="HtmlAbstractions" UseBuildCache="true" />
+    <Repository Include="JsonPatch" UseBuildCache="true" />
+    <Repository Include="Logging" UseBuildCache="true" />
+    <Repository Include="Microsoft.Data.Sqlite" UseBuildCache="true" />
+    <Repository Include="Options" UseBuildCache="true" />
+    <Repository Include="Testing" UseBuildCache="true" />
   </ItemGroup>
 </Project>

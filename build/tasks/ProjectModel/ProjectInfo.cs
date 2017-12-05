@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RepoTasks.ProjectModel
 {
@@ -44,5 +45,6 @@ namespace RepoTasks.ProjectModel
 
         public IReadOnlyList<ProjectFrameworkInfo> Frameworks { get; }
         public IReadOnlyList<DotNetCliReferenceInfo> Tools { get; }
+        public SolutionInfo SolutionInfo { get; internal set; }
     }
 }

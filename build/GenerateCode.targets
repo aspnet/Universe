@@ -1,0 +1,19 @@
+<!--
+
+The targets in this file should not be executed from a CI build.
+They are meant to be used by developers to update the ASP.NET Core configuration.
+
+-->
+<Project>
+
+  <!-- Generates kproj files for each KoreBuild project -->
+  <Target Name="GenerateSubmoduleProjects" DependsOnTargets="GeneratePropsFiles">
+
+    <RepoTasks.GenerateSubmoduleProjects
+      Solutions="@(Solution)"
+      Repositories="@(Repository)"
+      RepositoryRoot="$(RepositoryRoot)"
+      Properties="Configuration=$(Configuration);BuildNumber=$(BuildNumber);DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath)" />
+  </Target>
+
+</Project>
