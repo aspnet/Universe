@@ -12,24 +12,14 @@
       <Private>false</Private>
       <!-- When true, this dependency should be mirrored to aspnetcore's nightly build feeds. -->
       <Mirror>false</Mirror>
-      <!-- When true, this dependency will be included in the metapackage. -->
-      <Metapackage>false</Metapackage>
-      <!-- When true, this dependency will be included in the runtime store. -->
-      <RuntimeStore>false</RuntimeStore>
-      <!-- When true, this dependency will be used to generate a deps.json for hosting startup that will be included in the runtime store. -->
-      <HostingStartup>false</HostingStartup>
-      <!-- When true, this dependency will be included in the LZMA. -->
-      <LZMA>false</LZMA>
-      <!-- When true, this tool dependency will be included in the metapackage. -->
-      <LZMATools>false</LZMATools>
     </ExternalDependency>
   </ItemDefinitionGroup>
 
   <!-- .NET Core feed -->
   <PropertyGroup>
     <DotNetCoreFeed>https://dotnet.myget.org/F/dotnet-core/api/v3/index.json</DotNetCoreFeed>
-    <CoreSetupPackageVersion>2.0.2-servicing-25728-02</CoreSetupPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>2.0.0</MicrosoftNETCorePlatformsPackageVersion>
+    <CoreSetupPackageVersion>2.0.3</CoreSetupPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>2.0.1</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftNETCoreApp20PackageVersion>$(CoreSetupPackageVersion)</MicrosoftNETCoreApp20PackageVersion>
   </PropertyGroup>
 
