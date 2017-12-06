@@ -1,0 +1,23 @@
+<Project>
+  <Import Project="obj\korebuild.g.props" Condition="Exists('obj\korebuild.g.props') AND '$(MSBuildProjectExtension)' != '.csproj'" />
+
+  <PropertyGroup>
+    <Product>Microsoft ASP.NET Core</Product>
+    <RepositoryUrl>https://github.com/aspnet/Universe</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)obj\nuget\</RestorePackagesPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)bin\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+
+  <ImportGroup Condition="'$(MSBuildProjectExtension)' != '.csproj'">
+    <Import Project="version.props" />
+    <Import Project="build\dependencies.props" />
+    <Import Project="build\tasks\RepoTasks.tasks" />
+    <Import Project="build\targets\Universe.Common.props" />
+    <Import Project="build\targets\Repository.Common.props" Condition="'$(MSBuildProjectExtension)' == '.repoproj'" />
+  </ImportGroup>
+</Project>

@@ -1,9 +1,9 @@
-<Project>
-  <Import Project="RepositoryBuild.targets" />
+<Project InitialTargets="GenerateKoreBuildPropsFile">
+  <!--
   <Import Project="RuntimeStore.targets" />
   <Import Project="RuntimeStoreInstaller.targets" />
   <Import Project="PackageArchive.targets" />
-  <Import Project="Templating.targets" />
+  <Import Project="Templating.targets" /> -->
   <Import Project="push.targets" />
   <Import Project="GenerateCode.targets" />
 
@@ -24,46 +24,31 @@
     <PrepareDependsOn>$(PrepareDependsOn);PrepareOutputPath</PrepareDependsOn>
     <CleanDependsOn>$(CleanDependsOn);CleanArtifacts;CleanUniverseArtifacts</CleanDependsOn>
     <RestoreDependsOn>$(RestoreDependsOn);RestoreExternalDependencies</RestoreDependsOn>
-    <CompileDependsOn>$(CompileDependsOn);BuildRepositories</CompileDependsOn>
-    <PackageDependsOn>$(PackageDependsOn);BuildAllMetapackage;BuildTemplates;SplitPackages</PackageDependsOn>
+    <PackageDependsOn>$(PackageDependsOn);BuildAllMetapackage;SplitPackages</PackageDependsOn>
     <VerifyDependsOn>$(VerifyDependsOn);VerifyCoherentVersions</VerifyDependsOn>
   </PropertyGroup>
 
-  <Target Name="PrepareOutputPath">
-    <MakeDir Directories="$(ArtifactsDir);$(BuildDir)" />
+  <Target Name="GenerateKoreBuildPropsFile">
+    <ItemGroup>
+      <_KoreBuildPropsFile Include="%3CProject>%3CPropertyGroup>%3CKoreBuildProjectFullPath>$(MSBuildProjectFullPath)%3C/KoreBuildProjectFullPath>%3C/PropertyGroup>%3C/Project>" />
+    </ItemGroup>
+    <MakeDir Directories="$(IntermediateDir)" />
+    <WriteLinesToFile File="$(IntermediateDir)korebuild.g.props" Lines="@(_KoreBuildPropsFile)" Overwrite="true" />
   </Target>
 
-  <Target Name="RestoreExternalDependencies">
-    <RepoTasks.DownloadNuGetPackages
-      Packages="@(ExternalDependency->WithMetadataValue('Mirror', 'false'))"
-      DestinationFolder="$(IntermediateExternalPackageDir)" />
-
-    <RepoTasks.DownloadNuGetPackages
-      Packages="@(ExternalDependency->WithMetadataValue('Mirror', 'true'))"
-      DestinationFolder="$(IntermediateMirrorPackageDir)" />
+  <Target Name="PrepareOutputPath">
+    <MakeDir Directories="$(ArtifactsDir);$(BuildDir)" />
   </Target>
 
   <Target Name="GeneratePropsFiles" DependsOnTargets="ResolveRepoInfo">
     <ItemGroup>
       <_LineupPackages Include="@(ExternalDependency)" />
       <_LineupPackages Include="%(ArtifactInfo.PackageId)" Version="%(ArtifactInfo.Version)" Condition=" '%(ArtifactInfo.ArtifactType)' == 'NuGetPackage' " />
-      <_LineupPackages Include="Microsoft.AspNetCore.All" Version="$(PackageVersion)" />
-
-      <_LineupSources Include="$(_DependencyPackagesDirectory)" Condition="'$(_DependencyPackagesDirectory)' != '' AND Exists('$(_DependencyPackagesDirectory)')" />
-      <_LineupSources Include="$(BuildDir)" />
-      <_LineupSources Include="$(IntermediateExternalPackageDir)" />
-      <_LineupSources Include="$(IntermediateMirrorPackageDir)" />
     </ItemGroup>
 
     <RepoTasks.GeneratePackageVersionPropsFile
       Packages="@(_LineupPackages)"
-      OutputPath="$(GeneratedPackageVersionPropsPath)" />
-
-    <Copy SourceFiles="$(GeneratedPackageVersionPropsPath)" DestinationFolder="$(ArtifactsDir)" />
-
-    <RepoTasks.GenerateRestoreSourcesPropsFile
-      Sources="@(_LineupSources)"
-      OutputPath="$(GeneratedRestoreSourcesPropsPath)" />
+      OutputPath="$(ArtifactsDir)dependencies.props" />
   </Target>
 
   <Target Name="CleanUniverseArtifacts">
@@ -71,28 +56,10 @@
   </Target>
 
   <Target Name="_PrepareRepositories">
-    <ItemGroup Condition="'$(KOREBUILD_REPOSITORY_INCLUDE)'!=''">
-      <_RepositoriesToInclude Include="$(KOREBUILD_REPOSITORY_INCLUDE)" />
-      <Repository
-        Remove="@(Repository)"
-        Condition="'@(Repository)'!='@(_RepositoriesToInclude)' AND '%(Identity)'!=''" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(KOREBUILD_REPOSITORY_EXCLUDE)'!=''">
-      <RepositoriesToExclude Include="$(KOREBUILD_REPOSITORY_EXCLUDE)" />
-      <Repository Remove="@(RepositoriesToExclude)" />
-    </ItemGroup>
-
-    <Error Text="KOREBUILD_REPOSITORY_EXCLUDE AND KOREBUILD_REPOSITORY_INCLUDE are specified."
-      Condition="'$(KOREBUILD_REPOSITORY_INCLUDE)' != '' AND '$(KOREBUILD_REPOSITORY_EXCLUDE)' != ''" />
-
     <ItemGroup>
       <Repository Update="%(Identity)" RootPath="$(SubmoduleRoot)%(Identity)\" />
     </ItemGroup>
   </Target>
-
-  <Target Name="BuildRepositories"
-     DependsOnTargets="_PrepareRepositories;GeneratePropsFiles;ComputeGraph;_BuildRepositories" />
 
   <Target Name="ResolveRepoInfo" DependsOnTargets="_PrepareRepositories">
 

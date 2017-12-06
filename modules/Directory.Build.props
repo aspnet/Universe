@@ -1,0 +1,6 @@
+<!-- Intentionally does not import upwards to isolate build contexts. -->
+<Project>
+  <PropertyGroup>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)..\obj\nuget\</RestorePackagesPath>
+  </PropertyGroup>
+</Project>

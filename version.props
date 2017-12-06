@@ -2,6 +2,7 @@
   <PropertyGroup>
     <VersionPrefix>2.0.4</VersionPrefix>
     <VersionSuffix>rtm</VersionSuffix>
+    <BuildNumber Condition="'$(BuildNumber)' == ''">t000</BuildNumber>
     <PackageVersion Condition="'$(IsFinalBuild)' == 'true' AND '$(VersionSuffix)' == 'rtm' ">$(VersionPrefix)</PackageVersion>
     <PackageVersionNoTimestamp Condition="'$(VersionSuffix)' == 'rtm' ">$(VersionPrefix)</PackageVersionNoTimestamp>
     <PackageVersion Condition="'$(IsFinalBuild)' == 'true' AND '$(VersionSuffix)' != 'rtm' ">$(VersionPrefix)-$(VersionSuffix)-final</PackageVersion>

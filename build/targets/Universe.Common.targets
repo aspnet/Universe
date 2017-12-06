@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+      <OutputType />
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Version)' == '' ">
+    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">1.0.0</VersionPrefix>
+    <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionPrefix)-$(VersionSuffix)</Version>
+    <Version Condition=" '$(Version)' == '' ">$(VersionPrefix)</Version>
+  </PropertyGroup>
+
+  <Target Name="GetProjectReferences" DependsOnTargets="$(GetProjectReferencesDependsOn)" Returns="@(_ProjectReferenceFullPath)">
+    <ItemGroup>
+      <_ProjectReferenceFullPath Include="%(ProjectReference.FullPath)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Override the default GetTargetPath target -->
+  <Target Name="GetTargetPath" DependsOnTargets="$(GetTargetPathDependsOn)" Returns="@(Artifact)" />
+
+  <!-- Override the default Build target because the one in Microsoft.Common.targets doesn't Return items -->
+  <Target Name="Build"
+    DependsOnTargets="$(BuildDependsOn)"
+    Returns="@(Artifact)" />
+</Project>

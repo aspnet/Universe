@@ -1,0 +1,15 @@
+﻿<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <RepositoryRoot>..\..\modules\Templating\</RepositoryRoot>
+    <UseBuildCache>False</UseBuildCache>
+    <IsFinalBuild>False</IsFinalBuild>
+
+    <BuildArgs>$(BuildArgs) /p:MicrosoftAspNetCoreAllPackageVersion=$(PackageVersion)</BuildArgs>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Templating depends on the entire framework -->
+    <ProjectReference Include="..\Managed\*.repoproj" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

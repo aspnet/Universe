@@ -1,0 +1,170 @@
+<Project>
+  <PropertyGroup>
+    <RepositoryRoot Condition=" ! $([System.IO.Path]::IsPathRooted($(RepositoryRoot)))">$(MSBuildProjectDirectory)\$(RepositoryRoot)</RepositoryRoot>
+    <RepositoryRoot>$([MSBuild]::NormalizeDirectory($(RepositoryRoot)))</RepositoryRoot>
+
+    <BuildScript Condition="'$(OS)'!='Windows_NT'">$(RepositoryRoot)build.sh</BuildScript>
+    <BuildScript Condition="'$(OS)'=='Windows_NT'">$(RepositoryRoot)build.cmd</BuildScript>
+    <BuildArgs>$(BuildArgs) /clp:NoSummary</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:GenerateFullPaths=true</BuildArgs>
+    <BuildArgs Condition="'$(RestorePackagesPath)' != ''">$(BuildArgs) /p:RestorePackagesPath=$(RestorePackagesPath)</BuildArgs>
+
+    <CoreBuildDependsOn>
+      GetTargetPath;
+    </CoreBuildDependsOn>
+
+    <CoreBuildDependsOn Condition="'$(UseBuildCache)' == 'true' AND '$(DesignTimeBuild)' != 'true' ">
+      $(CoreBuildDependsOn);
+      ResolveReferences;
+      DownloadFromBuildCache;
+    </CoreBuildDependsOn>
+
+    <CoreBuildDependsOn Condition="'$(UseBuildCache)' != 'true' AND '$(DesignTimeBuild)' != 'true' ">
+      $(CoreBuildDependsOn);
+      ResolveReferences;
+      GeneratePropsFiles;
+      Compile;
+    </CoreBuildDependsOn>
+
+    <CompileDependsOn>
+      ResolveReferences;
+      ResolveArtifacts;
+      GeneratePropsFiles;
+      CoreCompile;
+    </CompileDependsOn>
+
+    <CoreCleanDependsOn>
+      CleanRepo;
+    </CoreCleanDependsOn>
+
+    <ResolveReferencesDependsOn>
+      BeforeResolveReferences;
+      AssignProjectConfiguration;
+      ResolveProjectReferences;
+      FindInvalidProjectReferences;
+      ResolveArtifactReferences;
+      AfterResolveReferences
+    </ResolveReferencesDependsOn>
+
+    <GetTargetPathDependsOn>
+      ResolveArtifacts;
+    </GetTargetPathDependsOn>
+
+    <GeneratedPackageVersionPropsPath>$(IntermediateOutputPath)dependencies.g.props</GeneratedPackageVersionPropsPath>
+    <GeneratedRestoreSourcePropsPath>$(IntermediateOutputPath)sources.g.props</GeneratedRestoreSourcePropsPath>
+
+    <!-- Fallbacks, in case RestorePackagesPath hasn't been set. (It should be set in Directory.Build.props) -->
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == ''">$(MSBuildThisFileDirectory)..\..\obj\nuget\packages\</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(USERPROFILE)' != ''">$(USERPROFILE).nuget\packages\</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(HOME)' != ''">$(HOME).nuget\packages\</RestorePackagesPath>
+  </PropertyGroup>
+
+  <Target Name="GeneratePropsFiles" DependsOnTargets="ResolveReferences;ResolveArtifactReferences">
+    <ItemGroup>
+      <_RestoreFileReferences Include="%(ArtifactReference.PackageId)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' ">
+        <Version>%(ArtifactReference.Version)</Version>
+        <TargetFramework>%(ArtifactReference.VariableTargetFramework)</TargetFramework>
+        <VariableName>%(ArtifactReference.VariableName)</VariableName>
+      </_RestoreFileReferences>
+
+      <_RestoreSources Include="%(ArtifactReference.RootDir)%(ArtifactReference.Directory)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' " />
+    </ItemGroup>
+
+    <RepoTasks.GeneratePackageVersionPropsFile
+      Packages="@(_RestoreFileReferences)"
+      OutputPath="$(GeneratedPackageVersionPropsPath)" />
+
+    <RepoTasks.GenerateRestoreSourcesPropsFile
+      Sources="@(_RestoreSources)"
+      OutputPath="$(GeneratedRestoreSourcePropsPath)" />
+  </Target>
+
+  <Target Name="CoreCompile">
+    <PropertyGroup>
+      <!-- Should reduce allowable package feeds to only nuget.org. -->
+      <BuildArgs>$(BuildArgs) /p:AspNetUniverseBuildOffline=true</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:RestoreNoCache=true</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcePropsPath)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:BuildNumber=$(BuildNumber)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:Configuration=$(Configuration)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /t:IsFinalBuild=$(IsFinalBuild)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /t:Package</BuildArgs>
+      <BuildArgs>$(BuildArgs) /t:VerifyPackages</BuildArgs>
+    </PropertyGroup>
+
+    <Copy SourceFiles="$(UniverseRepositoryRoot)korebuild-lock.txt" DestinationFolder="$(RepositoryRoot)" />
+    <Message Text="Compiling $(MSBuildProjectName)" Importance="High" />
+    <Exec Command="$(BuildScript) $(BuildArgs)"
+          WorkingDirectory="$(RepositoryRoot)"
+          StandardOutputImportance="Normal"
+          EnvironmentVariables="NUGET_PACKAGES=$(RestorePackagesPath)" />
+
+    <ItemGroup>
+      <_CompileOutputs Include="$(RepositoryRoot)artifacts\**\*" />
+    </ItemGroup>
+
+    <!-- TODO: consider writing directly to output path instead of copying. There were problems with trailing slashes :( -->
+    <Copy SourceFiles="@(_CompileOutputs)" DestinationFiles="$(OutputPath)%(RecursiveDir)%(FileName)%(Extension)" />
+
+    <Message Text="$(MSBuildProjectName) -> %(Artifact.FullPath)" Condition="'%(Artifact.Identity)' != ''" Importance="High" />
+
+    <!-- Clean the local nuget cache -->
+    <RemoveDir Directories="$(RestorePackagesPath)\%(Artifact.PackageId)\%(Version)\" Condition="'%(ArtifactType)' == 'NuGetPackage'" />
+  </Target>
+
+  <Target Name="CleanRepo">
+    <Error Text="KoreBuildProjectFullPath is not defined" Condition="'$(KoreBuildProjectFullPath)' == ''" />
+    <MSBuild Projects="$(KoreBuildProjectFullPath)"
+             Targets="Clean"
+             Properties="RepositoryRoot=$(RepositoryRoot)" />
+  </Target>
+
+  <Target Name="DownloadFromBuildCache" DependsOnTargets="ResolveArtifacts">
+
+    <ItemGroup>
+      <_PackagesToDownload Include="%(Artifact.PackageId)" Version="%(Artifact.Version)" Source="$(NuGetArtifactSource)" />
+    </ItemGroup>
+
+    <RepoTasks.DownloadNuGetPackages
+      Packages="@(_PackagesToDownload)"
+      DestinationFolder="$(OutputPath)build\"
+      ContinueOnError="true" />
+
+    <ItemGroup Condition="'$(FallbackNuGetArtifactSource)' != ''">
+      <_PackagesToDownload Update="@(_PackagesToDownload)" Source="$(FallbackNuGetArtifactSource)" />
+    </ItemGroup>
+
+    <!--
+      For now, ignore packages that we can't download from somewhere.
+      Some packages marked as 'noship' in a previous release are not available anywhere, but these are usually not dependended upon within the repo graph.
+      For example, Microsoft.Extensions.Configuration.DockerSecrets
+    -->
+    <RepoTasks.DownloadNuGetPackages
+      Packages="@(_PackagesToDownload)"
+      DestinationFolder="$(OutputPath)build\"
+      Condition="'$(FallbackNuGetArtifactSource)' != ''"
+      ContinueOnError="true" />
+
+    <MakeDir Directories="%(Artifact.RootDir)%(Artifact.Directory)" />
+
+    <Message Text="CACHE $(MSBuildProjectName) -> %(Artifact.FullPath)" Condition="%(Artifact.Identity) != ''" Importance="High" />
+  </Target>
+
+  <Target Name="ResolveArtifacts">
+    <Error Text="KoreBuildProjectFullPath is not defined" Condition="'$(KoreBuildProjectFullPath)' == ''" />
+    <MSBuild Projects="$(KoreBuildProjectFullPath)"
+             Targets="GetArtifactInfo"
+             Properties="RepositoryRoot=$(RepositoryRoot);ArtifactsDir=$(OutputPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=$(IsFinalBuild)">
+      <Output TaskParameter="TargetOutputs" ItemName="Artifact" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="ResolveArtifactReferences">
+    <RemoveDuplicates Inputs="@(_ResolvedProjectReferencePaths)">
+      <Output TaskParameter="Filtered" ItemName="ArtifactReference" />
+    </RemoveDuplicates>
+  </Target>
+
+</Project>
