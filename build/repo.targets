@@ -1,9 +1,4 @@
 <Project InitialTargets="GenerateKoreBuildPropsFile">
-  <!--
-  <Import Project="RuntimeStore.targets" />
-  <Import Project="RuntimeStoreInstaller.targets" />
-  <Import Project="PackageArchive.targets" />
-  <Import Project="Templating.targets" /> -->
   <Import Project="push.targets" />
   <Import Project="GenerateCode.targets" />
 

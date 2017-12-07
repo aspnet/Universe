@@ -1,0 +1,8 @@
+<Project>
+  <Target Name="VerifyPlatform" BeforeTargets="Build;Rebuild">
+    <Error Text="Cannot build '$(Platform)' on Windows. Set Platform to win-x64 or win-x86." Condition="$([MSBuild]::IsOSPlatform('Windows')) AND '$(Platform)' != 'win-x64'" />
+    <Error Text="Cannot build '$(Platform)' on Windows. Set Platform to win-x64 or win-x86." Condition="$([MSBuild]::IsOSPlatform('Windows')) AND '$(Platform)' != 'win-x86'" />
+    <Error Text="Cannot build '$(Platform)' on macOS. Set Platform to osx-x64." Condition="$([MSBuild]::IsOSPlatform('OSX')) AND '$(Platform)' != 'osx-x86'" />
+    <Error Text="Cannot build '$(Platform)' on Linux. Set Platform to linux-x64." Condition="$([MSBuild]::IsOSPlatform('Linux')) AND '$(Platform)' != 'linux-x86'" />
+  </Target>
+</Project>

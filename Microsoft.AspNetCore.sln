@@ -8,91 +8,91 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Templating", "src\Tooling\T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mirror", "src\Partners\Mirror.proj", "{360B9FB0-7EC3-4C88-81E9-C32009D283D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Antiforgery", "src\Managed\Antiforgery.repoproj", "{AAF46610-48C2-47CD-BEC6-E983F6F77FBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Antiforgery", "src\Framework\Antiforgery.repoproj", "{AAF46610-48C2-47CD-BEC6-E983F6F77FBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureIntegration", "src\Managed\AzureIntegration.repoproj", "{4FAFC7E1-1F22-4949-86E8-2ABB60576436}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureIntegration", "src\Framework\AzureIntegration.repoproj", "{4FAFC7E1-1F22-4949-86E8-2ABB60576436}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicMiddleware", "src\Managed\BasicMiddleware.repoproj", "{A4161713-5965-4CD1-97E5-0030B0B4CCB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicMiddleware", "src\Framework\BasicMiddleware.repoproj", "{A4161713-5965-4CD1-97E5-0030B0B4CCB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrowserLink", "src\Managed\BrowserLink.repoproj", "{731A3498-79C4-4F0E-B657-01CFF0FBEE5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrowserLink", "src\Framework\BrowserLink.repoproj", "{731A3498-79C4-4F0E-B657-01CFF0FBEE5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caching", "src\Managed\Caching.repoproj", "{64D5E049-0226-4568-9C55-CF7B26AF061F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caching", "src\Framework\Caching.repoproj", "{64D5E049-0226-4568-9C55-CF7B26AF061F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Managed\Common.repoproj", "{126B962D-27E7-49BC-8B1F-A72C799666E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Framework\Common.repoproj", "{126B962D-27E7-49BC-8B1F-A72C799666E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "src\Managed\Configuration.repoproj", "{C57CEC56-C590-4391-8635-9934597D4ABD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "src\Framework\Configuration.repoproj", "{C57CEC56-C590-4391-8635-9934597D4ABD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CORS", "src\Managed\CORS.repoproj", "{67BA5666-7379-4E10-8586-C85EBC11F2F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CORS", "src\Framework\CORS.repoproj", "{67BA5666-7379-4E10-8586-C85EBC11F2F3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataProtection", "src\Managed\DataProtection.repoproj", "{46A5CC57-1937-4C55-9D69-DAF6F857DBC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataProtection", "src\Framework\DataProtection.repoproj", "{46A5CC57-1937-4C55-9D69-DAF6F857DBC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "src\Managed\DependencyInjection.repoproj", "{48195A4C-150B-4A94-B180-468430647B7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection", "src\Framework\DependencyInjection.repoproj", "{48195A4C-150B-4A94-B180-468430647B7C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics", "src\Managed\Diagnostics.repoproj", "{EA07A303-5B24-4179-AC72-67AAE239969D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics", "src\Framework\Diagnostics.repoproj", "{EA07A303-5B24-4179-AC72-67AAE239969D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetTools", "src\Managed\DotNetTools.repoproj", "{9EB4D24E-11CA-4268-8517-432FCFBA64BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetTools", "src\Framework\DotNetTools.repoproj", "{9EB4D24E-11CA-4268-8517-432FCFBA64BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore", "src\Managed\EntityFrameworkCore.repoproj", "{2AA88124-670A-4A46-8254-2FE8E3B51236}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore", "src\Framework\EntityFrameworkCore.repoproj", "{2AA88124-670A-4A46-8254-2FE8E3B51236}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventNotification", "src\Managed\EventNotification.repoproj", "{122C0172-D503-427D-96F3-322A6B92144E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventNotification", "src\Framework\EventNotification.repoproj", "{122C0172-D503-427D-96F3-322A6B92144E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSystem", "src\Managed\FileSystem.repoproj", "{FBB2FC22-5400-4C49-BA08-211A57CF9FE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSystem", "src\Framework\FileSystem.repoproj", "{FBB2FC22-5400-4C49-BA08-211A57CF9FE9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosting", "src\Managed\Hosting.repoproj", "{119BF1B0-BB08-4FC8-9017-BBD52DE74E62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosting", "src\Framework\Hosting.repoproj", "{119BF1B0-BB08-4FC8-9017-BBD52DE74E62}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlAbstractions", "src\Managed\HtmlAbstractions.repoproj", "{9FA083E1-E497-4D3B-B136-1EAA8D3A04D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlAbstractions", "src\Framework\HtmlAbstractions.repoproj", "{9FA083E1-E497-4D3B-B136-1EAA8D3A04D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpAbstractions", "src\Managed\HttpAbstractions.repoproj", "{4E2730E3-86A7-4FE9-9FFC-39399520138D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpAbstractions", "src\Framework\HttpAbstractions.repoproj", "{4E2730E3-86A7-4FE9-9FFC-39399520138D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpSysServer", "src\Managed\HttpSysServer.repoproj", "{403B6581-D925-434F-AEFC-27B2548EAE70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpSysServer", "src\Framework\HttpSysServer.repoproj", "{403B6581-D925-434F-AEFC-27B2548EAE70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "src\Managed\Identity.repoproj", "{DD662D59-4C67-47D3-8FF5-DD8F843F71F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "src\Framework\Identity.repoproj", "{DD662D59-4C67-47D3-8FF5-DD8F843F71F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IISIntegration", "src\Managed\IISIntegration.repoproj", "{1DDF6A61-8C26-4A30-81F6-93541432BBBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IISIntegration", "src\Framework\IISIntegration.repoproj", "{1DDF6A61-8C26-4A30-81F6-93541432BBBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JavaScriptServices", "src\Managed\JavaScriptServices.repoproj", "{1D4B5932-7545-439C-A2FD-0FCFC9777E01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JavaScriptServices", "src\Framework\JavaScriptServices.repoproj", "{1D4B5932-7545-439C-A2FD-0FCFC9777E01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonPatch", "src\Managed\JsonPatch.repoproj", "{DD346C7C-0246-42DF-8730-54BC16729514}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonPatch", "src\Framework\JsonPatch.repoproj", "{DD346C7C-0246-42DF-8730-54BC16729514}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KestrelHttpServer", "src\Managed\KestrelHttpServer.repoproj", "{BCFC1D26-BE81-44EF-B001-29A19C26022E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KestrelHttpServer", "src\Framework\KestrelHttpServer.repoproj", "{BCFC1D26-BE81-44EF-B001-29A19C26022E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localization", "src\Managed\Localization.repoproj", "{5B818FC8-7A31-45BD-9E50-AE833BF9CE13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localization", "src\Framework\Localization.repoproj", "{5B818FC8-7A31-45BD-9E50-AE833BF9CE13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging", "src\Managed\Logging.repoproj", "{08A05E0B-1AC5-4033-996F-1B407073331B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging", "src\Framework\Logging.repoproj", "{08A05E0B-1AC5-4033-996F-1B407073331B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaPackages", "src\Managed\MetaPackages.repoproj", "{8374F065-4603-4C34-BFBA-EA5A75E7C0EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaPackages", "src\Framework\MetaPackages.repoproj", "{8374F065-4603-4C34-BFBA-EA5A75E7C0EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Data.Sqlite", "src\Managed\Microsoft.Data.Sqlite.repoproj", "{38100101-2C1F-420D-94AF-9AA14B426F00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Data.Sqlite", "src\Framework\Microsoft.Data.Sqlite.repoproj", "{38100101-2C1F-420D-94AF-9AA14B426F00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mvc", "src\Managed\Mvc.repoproj", "{7B738B38-E161-4E2C-9E26-C0574D394DBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mvc", "src\Framework\Mvc.repoproj", "{7B738B38-E161-4E2C-9E26-C0574D394DBB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Options", "src\Managed\Options.repoproj", "{B94079EB-C1DE-4C15-80D2-BD9D736C23DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Options", "src\Framework\Options.repoproj", "{B94079EB-C1DE-4C15-80D2-BD9D736C23DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxy", "src\Managed\Proxy.repoproj", "{EC5CBD08-F696-402D-9B73-EE6FBA1A5FE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxy", "src\Framework\Proxy.repoproj", "{EC5CBD08-F696-402D-9B73-EE6FBA1A5FE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Razor", "src\Managed\Razor.repoproj", "{365F3F02-B131-477C-9570-494FB9C28EF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Razor", "src\Framework\Razor.repoproj", "{365F3F02-B131-477C-9570-494FB9C28EF9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcPrecompilation", "src\Managed\MvcPrecompilation.repoproj", "{B8D65CDD-AF9D-4112-BC0D-9C90229A7F10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcPrecompilation", "src\Framework\MvcPrecompilation.repoproj", "{B8D65CDD-AF9D-4112-BC0D-9C90229A7F10}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResponseCaching", "src\Managed\ResponseCaching.repoproj", "{06D6702D-B4BF-419B-96E5-45B28CA890B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResponseCaching", "src\Framework\ResponseCaching.repoproj", "{06D6702D-B4BF-419B-96E5-45B28CA890B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Routing", "src\Managed\Routing.repoproj", "{3060F252-3D55-42E4-A1B6-9546844FA87A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Routing", "src\Framework\Routing.repoproj", "{3060F252-3D55-42E4-A1B6-9546844FA87A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffolding", "src\Managed\Scaffolding.repoproj", "{38612747-3065-4342-A7BB-5F6D7BAF99E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffolding", "src\Framework\Scaffolding.repoproj", "{38612747-3065-4342-A7BB-5F6D7BAF99E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Security", "src\Managed\Security.repoproj", "{C45A135D-08FC-45F6-A1F6-F2D198D28C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Security", "src\Framework\Security.repoproj", "{C45A135D-08FC-45F6-A1F6-F2D198D28C0E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerTests", "src\Managed\ServerTests.repoproj", "{70F4CD07-023E-4A4D-B0EC-A0BEABE5ECDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerTests", "src\Framework\ServerTests.repoproj", "{70F4CD07-023E-4A4D-B0EC-A0BEABE5ECDA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Session", "src\Managed\Session.repoproj", "{E544A3FA-2D34-42A4-A4B8-B392C03D1243}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Session", "src\Framework\Session.repoproj", "{E544A3FA-2D34-42A4-A4B8-B392C03D1243}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaticFiles", "src\Managed\StaticFiles.repoproj", "{470BB707-E7D6-4DC6-913F-EE02F9DE0288}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaticFiles", "src\Framework\StaticFiles.repoproj", "{470BB707-E7D6-4DC6-913F-EE02F9DE0288}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "src\Managed\Testing.repoproj", "{558955F2-D1CE-4ADC-9E2F-AF76E6878107}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "src\Framework\Testing.repoproj", "{558955F2-D1CE-4ADC-9E2F-AF76E6878107}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSockets", "src\Managed\WebSockets.repoproj", "{E2A18F67-482B-4B64-8FC9-2C60509EF38B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSockets", "src\Framework\WebSockets.repoproj", "{E2A18F67-482B-4B64-8FC9-2C60509EF38B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managed", "Managed", "{C3229682-9150-4E4A-BF29-9B1E92B6FFF1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{C3229682-9150-4E4A-BF29-9B1E92B6FFF1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A7FFFC63-E8ED-46D3-86C0-FEE4449BD4D7}"
 EndProject

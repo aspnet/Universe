@@ -164,7 +164,7 @@ namespace RepoTasks
 
         private void CreateProjects(AdjacencyMatrix slnGraph)
         {
-            var root = Path.Combine(RepositoryRoot, "src", "Managed");
+            var root = Path.Combine(RepositoryRoot, "src", "Framework");
             Directory.CreateDirectory(root);
 
             var repos = Repositories.ToDictionary(i => i.ItemSpec, i => i, StringComparer.OrdinalIgnoreCase);
