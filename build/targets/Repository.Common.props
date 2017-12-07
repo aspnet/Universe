@@ -1,8 +1,6 @@
 <Project>
   <PropertyGroup>
     <BuildInParallel>true</BuildInParallel>
-    <Configuration>Debug</Configuration>
-    <Platform>AnyCPU</Platform>
     <UniverseRepositoryRoot>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory)..\..\))</UniverseRepositoryRoot>
     <UniverseArtifactsDir>$(UniverseRepositoryRoot)artifacts\</UniverseArtifactsDir>
     <UniverseBuildDir>$(UniverseArtifactsDir)build\</UniverseBuildDir>

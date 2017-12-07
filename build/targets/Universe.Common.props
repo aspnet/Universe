@@ -6,6 +6,8 @@
   </ItemDefinitionGroup>
 
   <PropertyGroup>
+    <Configurations Condition="'$(Configurations)'==''">Debug;Release</Configurations>
+    <Platforms Condition="'$(Platforms)'==''">AnyCPU</Platforms>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
     <PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
@@ -22,4 +24,21 @@
     <IntermediateOutputPath Condition=" $(IntermediateOutputPath) == '' and '$(PlatformName)' != 'AnyCPU' ">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
     <IntermediateOutputPath Condition="!HasTrailingSlash('$(IntermediateOutputPath)')">$(IntermediateOutputPath)\</IntermediateOutputPath>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineCommonItemSchemas>true</DefineCommonItemSchemas>
+    <DefineCommonCapabilities>false</DefineCommonCapabilities>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Uncomment this to see which capabilities are used by the project system -->
+    <!-- <ProjectCapability Include="DiagnoseCapabilities" /> -->
+    <ProjectCapability Include="
+      CPS;
+      UseFileGlobs;
+      ProjectReferences;
+      OpenProjectFile;
+      HandlesOwnReload;" />
+  </ItemGroup>
+  <!-- See https://github.com/Microsoft/VSProjectSystem/blob/master/doc/overview/project_capabilities.md -->
 </Project>
