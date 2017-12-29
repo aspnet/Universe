@@ -1,0 +1,11 @@
+<Project>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>win-x86;win-x64;osx-x64;linux-x64</Platforms>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <Import Project="RuntimeStore.targets" />
+</Project>

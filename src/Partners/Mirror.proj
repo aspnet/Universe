@@ -31,9 +31,7 @@
   </Target>
 
   <Target Name="DownloadNuGetPackages">
-    <RepoTasks.DownloadNuGetPackages
-      Packages="@(ExternalDependency)"
-      DestinationFolder="$(OutputPath)" />
+    <RepoTasks.DownloadNuGetPackages Packages="@(ExternalDependency)" DestinationFolder="$(OutputPath)" />
   </Target>
 
 </Project>

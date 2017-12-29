@@ -1,6 +1,4 @@
 <Project>
-  <Import Project="common.props" />
-
   <PropertyGroup>
     <_DependencyBuildDirectory>$(RepositoryRoot).deps\build\</_DependencyBuildDirectory>
     <_DependencyMirrorDirectory>$(RepositoryRoot).deps\mirror\</_DependencyMirrorDirectory>

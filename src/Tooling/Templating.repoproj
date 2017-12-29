@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Templating depends on the entire framework -->
-    <ProjectReference Include="..\Managed\*.repoproj" />
+    <ProjectReference Include="..\Framework\*.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

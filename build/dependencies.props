@@ -19,53 +19,11 @@
   <PropertyGroup>
     <DotNetCoreFeed>https://dotnet.myget.org/F/dotnet-core/api/v3/index.json</DotNetCoreFeed>
     <CoreSetupPackageVersion>2.0.3</CoreSetupPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>2.0.1</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftNETCoreApp20PackageVersion>$(CoreSetupPackageVersion)</MicrosoftNETCoreApp20PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ExternalDependency Include="System.Memory" Version="4.4.0-preview3-25519-03" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.NETCore.Platforms" Version="$(MicrosoftNETCorePlatformsPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.DotNet.PlatformAbstractions" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.Extensions.DependencyModel" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" >
-      <VariableName>RuntimeFrameworkVersion</VariableName>
-      <TargetFramework>netcoreapp2.0</TargetFramework>
-    </ExternalDependency>
-    <ExternalDependency Include="Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
-    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DotNetCoreFeed)" Mirror="true" />
   </ItemGroup>
 
   <!-- ASP.NET Core Tools feed -->
@@ -143,6 +101,48 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ExternalDependency Include="Microsoft.NETCore.Platforms" Version="2.0.1" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="Microsoft.DotNet.PlatformAbstractions" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="Microsoft.Extensions.DependencyModel" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" >
+      <VariableName>RuntimeFrameworkVersion</VariableName>
+      <TargetFramework>netcoreapp2.0</TargetFramework>
+    </ExternalDependency>
+    <ExternalDependency Include="Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-arm.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.linux-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.osx-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.rhel.6-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x64.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.App" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetAppHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetHost" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetHostPolicy" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+    <ExternalDependency Include="runtime.win-x86.Microsoft.NETCore.DotNetHostResolver" Version="$(CoreSetupPackageVersion)" Source="$(DefaultNuGetFeed)" />
+
     <ExternalDependency Include="Libuv" Version="1.10.0" Source="$(DefaultNuGetFeed)" />
     <ExternalDependency Include="BenchmarkDotNet" Version="0.10.3" Source="$(DefaultNuGetFeed)" Private="true"/>
     <ExternalDependency Include="EntityFramework" Version="6.1.3" Source="$(DefaultNuGetFeed)" Private="true" />

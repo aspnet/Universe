@@ -89,7 +89,7 @@
       <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:BuildNumber=$(BuildNumber)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:Configuration=$(Configuration)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /t:IsFinalBuild=$(IsFinalBuild)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:IsFinalBuild=$(IsFinalBuild)</BuildArgs>
       <BuildArgs>$(BuildArgs) /t:Package</BuildArgs>
       <BuildArgs>$(BuildArgs) /t:VerifyPackages</BuildArgs>
     </PropertyGroup>
