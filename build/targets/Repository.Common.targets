@@ -52,15 +52,9 @@
 
     <GeneratedPackageVersionPropsPath>$(IntermediateOutputPath)dependencies.g.props</GeneratedPackageVersionPropsPath>
     <GeneratedRestoreSourcePropsPath>$(IntermediateOutputPath)sources.g.props</GeneratedRestoreSourcePropsPath>
-
-    <!-- Fallbacks, in case RestorePackagesPath hasn't been set. (It should be set in Directory.Build.props) -->
-    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == ''">$(MSBuildThisFileDirectory)..\..\obj\nuget\packages\</RestorePackagesPath>
-    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</RestorePackagesPath>
-    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(USERPROFILE)' != ''">$(USERPROFILE).nuget\packages\</RestorePackagesPath>
-    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(HOME)' != ''">$(HOME).nuget\packages\</RestorePackagesPath>
   </PropertyGroup>
 
-  <Target Name="GeneratePropsFiles" DependsOnTargets="ResolveReferences;ResolveArtifactReferences">
+  <Target Name="GeneratePropsFiles" DependsOnTargets="ResolveReferences">
     <ItemGroup>
       <_RestoreFileReferences Include="%(ArtifactReference.PackageId)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' ">
         <Version>%(ArtifactReference.Version)</Version>
@@ -159,12 +153,6 @@
              Properties="RepositoryRoot=$(RepositoryRoot);ArtifactsDir=$(OutputPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=$(IsFinalBuild)">
       <Output TaskParameter="TargetOutputs" ItemName="Artifact" />
     </MSBuild>
-  </Target>
-
-  <Target Name="ResolveArtifactReferences">
-    <RemoveDuplicates Inputs="@(_ResolvedProjectReferencePaths)">
-      <Output TaskParameter="Filtered" ItemName="ArtifactReference" />
-    </RemoveDuplicates>
   </Target>
 
 </Project>

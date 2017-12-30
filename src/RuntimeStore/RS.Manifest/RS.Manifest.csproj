@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk"/>
+
+  <PropertyGroup>
+    <TargetFramework>$(RuntimeStoreTargetFramework)</TargetFramework>
+    <RestoreSources>$(DotNetRestoreSources)</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RS.References" Version="$(PackageVersion)" />
+  </ItemGroup>
+
+  <Target Name="GetPackageDefinitions" Returns="@(_PackageDefinitions)">
+    <ResolvePackageDependencies ProjectPath="$(MSBuildThisFileFullPath)" ProjectAssetsFile="$(ProjectAssetsFile)">
+      <Output TaskParameter="PackageDefinitions" ItemName="_PackageDefinitions" />
+    </ResolvePackageDependencies>
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk"/>
+</Project>

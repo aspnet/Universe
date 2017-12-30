@@ -1,174 +1,124 @@
 <Project>
+
+  <Import Project="$([System.IO.Path]::GetDirectoryName($(KoreBuildProjectFullPath)))\modules\KoreBuild.Tasks\module.props" />
+
   <PropertyGroup>
-    <_DependencyBuildDirectory>$(RepositoryRoot).deps\build\</_DependencyBuildDirectory>
-    <_DependencyMirrorDirectory>$(RepositoryRoot).deps\mirror\</_DependencyMirrorDirectory>
-    <_BuildScriptsDirectory>$(MSBuildThisFileDirectory)tools\scripts\</_BuildScriptsDirectory>
-    <_WorkRoot>$(RepositoryRoot).w\</_WorkRoot>
-    <_RuntimeStoreWorkDirectory>$(_WorkRoot).rw\</_RuntimeStoreWorkDirectory>
-    <_RuntimeStoreOutputDirectory>$(_WorkRoot).ro\</_RuntimeStoreOutputDirectory>
-    <_TemplatesDirectory>$(MSBuildThisFileDirectory)tools\templates\</_TemplatesDirectory>
-    <_SrcDirectory>$(RepositoryRoot)src\</_SrcDirectory>
-    <_AllMetapackageDirectory>$(_SrcDirectory)Microsoft.AspNetCore.All\</_AllMetapackageDirectory>
-    <_ExistingManifestsDirectory>$(_AllMetapackageDirectory)build\</_ExistingManifestsDirectory>
-    <_ArtifactsZipDirectory>$(ArtifactsDir)zip\</_ArtifactsZipDirectory>
-    <_StoreZipDirectory>$(_ArtifactsZipDirectory)rs\</_StoreZipDirectory>
-    <_SymbolsZipDirectory>$(_ArtifactsZipDirectory)symbols\</_SymbolsZipDirectory>
-    <_DepsOutputDirectory>$(ArtifactsDir)deps\</_DepsOutputDirectory>
+    <!-- target chain  -->
+    <CoreBuildDependsOn>
+      ResolveReferences;
+      Compile;
+    </CoreBuildDependsOn>
+
+    <ResolveReferencesDependsOn>
+      BeforeResolveReferences;
+      AssignProjectConfiguration;
+      ResolveProjectReferences;
+      FindInvalidProjectReferences;
+      ResolveArtifactReferences;
+      AfterResolveReferences
+    </ResolveReferencesDependsOn>
+
+    <CompileDependsOn>
+      ResolveReferences;
+      CoreCompile;
+    </CompileDependsOn>
+
+    <GetTargetPathDependsOn>
+      ResolveArtifacts;
+    </GetTargetPathDependsOn>
+
+    <!-- Computed props -->
+    <RuntimeStoreArch>$(RuntimeIdentifier.LastIndexOf('-'))</RuntimeStoreArch>
+    <RuntimeStoreArch>$([MSBuild]::Add(1, $(RuntimeStoreArch)))</RuntimeStoreArch>
+    <RuntimeStoreArch>$(RuntimeIdentifier.Substring($(RuntimeStoreArch)))</RuntimeStoreArch>
+
+    <!-- file paths -->
+    <GeneratedPackageVersionPropsPath>$(IntermediateOutputPath)dependencies.g.props</GeneratedPackageVersionPropsPath>
+    <GeneratedRestoreSourcePropsPath>$(IntermediateOutputPath)sources.g.props</GeneratedRestoreSourcePropsPath>
+
+    <TargetPath>$(OutputPath)aspnetcore-store-$(PackageVersion)-$(RuntimeIdentifier).zip</TargetPath>
+    <TargetSymbolsPath>$(OutputPath)aspnetcore-symbols-$(PackageVersion)-$(RuntimeIdentifier).zip</TargetSymbolsPath>
   </PropertyGroup>
 
-  <Target Name="BuildAllMetapackage" DependsOnTargets="ResolveRepoInfo">
+  <Target Name="ResolveArtifacts">
+    <ItemGroup>
+      <Artifact Include="$(TargetPath)">
+        <ArtifactType>ZipArchive</ArtifactType>
+        <Id>aspnetcore-store</Id>
+        <RuntimeIdentifier>$(RuntimeIdentifier)</RuntimeIdentifier>
+        <Version>$(PackageVersion)</Version>
+        <Arch>$(RuntimeArch)</Arch>
+      </Artifact>
+      <Artifact Include="$(TargetSymbolsPath)">
+        <ArtifactType>ZipArchive</ArtifactType>
+        <Id>aspnetcore-symbols</Id>
+        <RuntimeIdentifier>$(RuntimeIdentifier)</RuntimeIdentifier>
+        <Version>$(PackageVersion)</Version>
+        <Arch>$(RuntimeArch)</Arch>
+      </Artifact>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CoreCompile" DependsOnTargets="GenerateRSReferencesPackage;BuildRuntimeStore;PackRuntimeStore">
+    <Message Text="%(ArtifactReference.Identity)" Importance="high" />
+  </Target>
+
+<!--
+Generates an intermediate package because we want to generate the runtime store using the closure of Microsoft.AspNetCore.All.
+not the closure of each package referenced by Microsoft.AspNetCore.All (the default behavior of ComposeStore.)
+-->
+  <Target Name="GenerateRSReferencesPackage" DependsOnTargets="ResolveReferences">
     <!-- Clear working directory -->
-    <RemoveDir Directories="$(_WorkRoot)" />
+    <RemoveDir Directories="$(IntermediateOutputPath);$(RestorePackagesPath)\RS.References\$(PackageVersion)\" />
 
-    <!-- Move to working dir -->
-    <PropertyGroup>
-      <MetapackageWorkDirectory>$(_WorkRoot)Microsoft.AspNetCore.All\</MetapackageWorkDirectory>
-    </PropertyGroup>
     <ItemGroup>
-      <AllMetapackageFiles Include="$(_AllMetapackageDirectory)**\*" />
+      <RSPackageReference Include="%(ArtifactReference.PackageId)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' ">
+        <Version>%(ArtifactReference.Version)</Version>
+        <TargetFramework>$(RuntimeStoreTargetFramework)</TargetFramework>
+      </RSPackageReference>
+      <!-- TODO update artifacts.props -->
+      <RSPackageReference Remove="%(PackageArtifact.Identity)" Condition="'%(PackageArtifact.RuntimeStore)' != 'true'" />
+
+      <RSPackageSources Include="%(ArtifactReference.RootDir)%(ArtifactReference.Directory)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' " />
+      <RSPackageSources Include="$(IntermediateOutputPath)" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(AllMetapackageFiles)" DestinationFolder="$(MetapackageWorkDirectory)\%(RecursiveDir)" />
-    <Copy SourceFiles="$(_SrcDirectory)Directory.Build.props" DestinationFolder="$(_WorkRoot)" />
-
-    <!-- Add references to project -->
-    <RepoTasks.AddMetapackageReferences
-      ReferencePackagePath="$(MetapackageWorkDirectory)Microsoft.AspNetCore.All.csproj"
-      BuildArtifacts="@(ArtifactInfo)"
-      PackageArtifacts="@(PackageArtifact)"
-      ExternalDependencies="@(ExternalDependency)" />
-
-    <!-- Set _Target=Restore so the project will be re-evaluated to include Internal.AspNetCore.Sdk MSBuild properties on the next step. -->
-    <MSBuild Projects="$(MetapackageWorkDirectory)Microsoft.AspNetCore.All.csproj"
-      Targets="Restore"
-      Properties="Configuration=$(Configuration);DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath);AspNetUniverseBuildOffline=true;_Target=Restore" />
-
-    <!-- Pack -->
-    <MSBuild Projects="$(MetapackageWorkDirectory)Microsoft.AspNetCore.All.csproj"
-      Targets="Pack"
-      Properties="Configuration=$(Configuration);DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath);AspNetUniverseBuildOffline=true" />
-
-    <!-- Copy to output directory -->
-    <ItemGroup>
-      <AllMetapackageNupkgFile Include="$(MetapackageWorkDirectory)**\*.nupkg" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(AllMetapackageNupkgFile)" DestinationFolder="$(BuildDir)" />
+    <PackNuspec NuspecPath="$(MSBuildThisFileDirectory)RS.References.nuspec"
+      Dependencies="@(RSPackageReference);@(ExternalDependency->WithMetadataValue('RuntimeStore', 'true'))"
+      Properties="version=$(PackageVersion)"
+      Overwrite="true"
+      DestinationFolder="$(IntermediateOutputPath)" />
   </Target>
 
-  <Target Name="BuildRSReferencesPackage" DependsOnTargets="ResolveRepoInfo;_PrepareRuntimeStoreBuildAssets">
-    <!-- Clear working directory -->
-    <RemoveDir Directories="$(_WorkRoot)" />
-
-    <!-- Move to working dir -->
+  <Target Name="BuildRuntimeStore" DependsOnTargets="GenerateRSReferencesPackage">
     <PropertyGroup>
-      <RSReferencesWorkDirectory>$(_WorkRoot)RS.References\</RSReferencesWorkDirectory>
-    </PropertyGroup>
-
-    <Copy SourceFiles="$(_TemplatesDirectory)RS.References\RS.References.csproj" DestinationFolder="$(RSReferencesWorkDirectory)" />
-    <Copy SourceFiles="$(_SrcDirectory)Directory.Build.props" DestinationFolder="$(_WorkRoot)" />
-
-    <!-- Generate RS.Reference project -->
-    <RepoTasks.AddRSReferences
-      ReferencePackagePath="$(RSReferencesWorkDirectory)RS.References.csproj"
-      BuildArtifacts="@(ArtifactInfo)"
-      PackageArtifacts="@(PackageArtifact)"
-      ExternalDependencies="@(ExternalDependency)" />
-
-    <!-- Set _Target=Restore so the project will be re-evaluated to include Internal.AspNetCore.Sdk MSBuild properties on the next step. -->
-    <MSBuild Projects="$(RSReferencesWorkDirectory)RS.References.csproj"
-      Targets="Restore"
-      Properties="Configuration=$(Configuration);DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath);_Target=Restore" />
-
-    <!-- Pack -->
-    <MSBuild Projects="$(RSReferencesWorkDirectory)RS.References.csproj"
-      Targets="Pack"
-      Properties="Configuration=$(Configuration);DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath)" />
-
-    <!-- Copy to output directory -->
-    <ItemGroup>
-      <RSReferenceNupkgFile Include="$(RSReferencesWorkDirectory)**\*.nupkg" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(RSReferenceNupkgFile)" DestinationFolder="$(_DependencyBuildDirectory)" />
-  </Target>
-
-  <Target Name="_PrepareRuntimeStoreBuildAssets">
-    <ItemGroup>
-      <_RuntimeStoreRestoreSources Include="$(_DependencyBuildDirectory)" Condition="Exists($(_DependencyBuildDirectory))" />
-      <_RuntimeStoreRestoreSources Include="$(_DependencyMirrorDirectory)" Condition="Exists($(_DependencyMirrorDirectory))" />
-      <_RuntimeStoreRestoreSources Include="$(BuildDir)" Condition="Exists($(BuildDir))" />
-    </ItemGroup>
-
-    <RepoTasks.GenerateRestoreSourcesPropsFile
-      Sources="@(_RuntimeStoreRestoreSources)"
-      OutputPath="$(GeneratedRestoreSourcesPropsPath)" />
-
-    <PropertyGroup>
-      <_RsManifestProps>MicrosoftAspNetCoreAllPackageVersion=$(PackageVersion)</_RsManifestProps>
-      <_RsManifestProps>$(_RsManifestProps);DotNetRestoreSourcesPropsPath=$(GeneratedRestoreSourcesPropsPath)</_RsManifestProps>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="_ResolveRuntimeStoreRID">
-    <Error Text="Please specify the platform for the runtime package store via RuntimeStoreArch: {x64|x86}." Condition="'$(RuntimeStoreArch)' == ''"/>
-
-    <PropertyGroup>
-      <RuntimeStoreRID Condition="$([MSBuild]::IsOSPlatform('Windows'))">win7-$(RuntimeStoreArch)</RuntimeStoreRID>
-      <RuntimeStoreRID Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux-$(RuntimeStoreArch)</RuntimeStoreRID>
-      <RuntimeStoreRID Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx-$(RuntimeStoreArch)</RuntimeStoreRID>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="BuildRuntimeStore" DependsOnTargets="_ResolveRuntimeStoreRID;_PrepareRuntimeStoreBuildAssets;BuildRSReferencesPackage">
-    <!-- Copy and update build assets -->
-    <Copy SourceFiles="$(_TemplatesDirectory)RS.Manifest\RS.Manifest.csproj" DestinationFiles="$(_WorkRoot)RS.Manifest\RS.Manifest.csproj" />
-    <Copy SourceFiles="$(_SrcDirectory)Directory.Build.props" DestinationFolder="$(_WorkRoot)" />
-
-    <PropertyGroup>
-      <__ComposeStoreProps />
+      <ComposeIntermediateOutputPath>$(IntermediateOutputPath)s\</ComposeIntermediateOutputPath>
+      <_ComposeStoreProps />
       <_ComposeStoreProps>$(_ComposeStoreProps);$(_RsManifestProps)</_ComposeStoreProps>
-      <_ComposeStoreProps>$(_ComposeStoreProps);ComposeDir=$(_RuntimeStoreOutputDirectory)</_ComposeStoreProps>
-      <_ComposeStoreProps>$(_ComposeStoreProps);ComposeWorkingDir=$(_RuntimeStoreWorkDirectory)</_ComposeStoreProps>
-      <_ComposeStoreProps>$(_ComposeStoreProps);RuntimeIdentifier=$(RuntimeStoreRID)</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);RestoreNoCache=true;</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);RestoreForce=true;</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);DotNetRestoreSources=@(RSPackageSources);</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);ComposeDir=$(ComposeIntermediateOutputPath)</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);ComposeWorkingDir=$(IntermediateOutputPath)rw\</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);RuntimeIdentifier=$(RuntimeIdentifier)</_ComposeStoreProps>
       <_ComposeStoreProps>$(_ComposeStoreProps);RuntimeFrameworkVersion=$(MicrosoftNETCoreApp20PackageVersion)</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);PackageVersion=$(PackageVersion);</_ComposeStoreProps>
+      <_ComposeStoreProps>$(_ComposeStoreProps);TargetFramework=$(RuntimeStoreTargetFramework);</_ComposeStoreProps>
     </PropertyGroup>
 
     <!-- Build runtime store -->
-    <MSBuild Projects="$(_WorkRoot)RS.Manifest\RS.Manifest.csproj"
+    <MSBuild Projects="RS.Manifest\RS.Manifest.csproj"
              Targets="ComposeStore"
              Properties="$(_ComposeStoreProps)" />
   </Target>
 
-  <Target Name="BuildHostingDeps" DependsOnTargets="ResolveRepoInfo">
-    <!-- Generate RS.Reference project -->
-    <RepoTasks.ResolveHostingStartupPackages
-      BuildArtifacts="@(ArtifactInfo)"
-      PackageArtifacts="@(PackageArtifact)">
-      <Output TaskParameter="HostingStartupArtifacts" ItemName="HostingStartupArtifacts" />
-    </RepoTasks.ResolveHostingStartupPackages>
-
-    <!--- MSBuild caches things if you run inproc so have to use Exec -->
-    <MSBuild Projects="$(_TemplatesDirectory)HostingStartup/HostingStartup.csproj"
-             Targets="Restore;Rebuild;CollectDeps"
-             Properties="DepsOutputPath=$(_DepsOutputDirectory);HostingStartupPackageName=%(HostingStartupArtifacts.PackageId);HostingStartupPackageVersion=%(HostingStartupArtifacts.Version);RuntimeFrameworkVersion=$(MicrosoftNETCoreApp20PackageVersion)" />
-
-    <ItemGroup>
-      <DepsFiles Include="$(_DepsOutputDirectory)**\*.deps.json" />
-    </ItemGroup>
-
-    <RepoTasks.TrimDeps DepsFiles="@(DepsFiles)" />
-  </Target>
-
-  <Target Name="PackRuntimeStore" DependsOnTargets="_ResolveRuntimeStoreRID">
+  <Target Name="PackRuntimeStore">
     <PropertyGroup>
-      <OutputZip>$(ArtifactsDir)aspnetcore-store-$(PackageVersion)-$(RuntimeStoreRID).zip</OutputZip>
-      <OutputSymbolZip>$(ArtifactsDir)aspnetcore-symbols-$(PackageVersion)-$(RuntimeStoreRID).zip</OutputSymbolZip>
+      <IntermediateRuntimeStoreManifest>$(ComposeIntermediateOutputPath)$(RuntimeStoreArch)\$(RuntimeStoreTargetFramework)\artifact.xml</IntermediateRuntimeStoreManifest>
     </PropertyGroup>
 
     <ItemGroup>
-      <RuntimeStoreManifestFiles Include="$(_RuntimeStoreOutputDirectory)**\artifact.xml" />
-      <RuntimeStoreFiles Include="$(_RuntimeStoreOutputDirectory)**\*" Exclude="$(_RuntimeStoreOutputDirectory)**\artifact.xml;$(_RuntimeStoreOutputDirectory)symbols\**\*" />
+      <RuntimeStoreFiles Include="$(ComposeIntermediateOutputPath)$(RuntimeStoreArch)\**\*" Exclude="$(IntermediateRuntimeStoreManifest)" />
       <RuntimeStoreSymbolFiles Include="$(_RuntimeStoreOutputDirectory)symbols\**\*" />
       <DepsFiles Include="$(_DepsOutputDirectory)**\*" />
       <ExistingStoreManifests Include="$(_ExistingManifestsDirectory)*.xml" />
@@ -177,10 +127,10 @@
     <!-- Compose new store and symbols -->
     <RepoTasks.ComposeNewStore
       ExistingManifests="@(ExistingStoreManifests)"
-      NewManifests="@(RuntimeStoreManifestFiles)"
+      NewManifests="$(IntermediateRuntimeStoreManifest)"
       RuntimeStoreFiles="@(RuntimeStoreFiles)"
       RuntimeStoreSymbolFiles="@(RuntimeStoreSymbolFiles)"
-      ManifestDestination="$(ArtifactsDir)aspnetcore-store-$(PackageVersion)-$(RuntimeStoreRID).xml"
+      ManifestDestination="$(ArtifactsDir)aspnetcore-store-$(PackageVersion)-$(RuntimeIdentifier).xml"
       StoreDestination="$(_StoreZipDirectory)store\"
       SymbolsDestination="$(_SymbolsZipDirectory)"/>
 
@@ -197,43 +147,18 @@
     <ZipArchive File="$(OutputSymbolZip)" SourceFiles="@(OutputSymbolZipFiles)" WorkingDirectory="$(_SymbolsZipDirectory)" Overwrite="true" Condition="'@(OutputSymbolZipFiles)' != ''"/>
   </Target>
 
-  <Target Name="CreateCommonManifest" DependsOnTargets="_PrepareRuntimeStoreBuildAssets">
-    <PropertyGroup>
-      <CommonManifestFileName>aspnetcore-store-$(PackageVersion)-common.xml</CommonManifestFileName>
-    </PropertyGroup>
 
-    <!-- Trim packages guaranteed to be in the runtime but isn't included in our runtime store -->
-    <ItemGroup>
-      <PackagesToTrim Include="runtime.win-arm64.runtime.native.system.data.sqlclient.sni" />
-    </ItemGroup>
+  <!-- OLD -->
 
-    <MSBuild Projects="$(_WorkRoot)RS.Manifest\RS.Manifest.csproj"
-             Targets="Restore;GetPackageDefinitions"
-             Properties="$(_RsManifestProps)" >
-      <Output TaskParameter="TargetOutputs" ItemName="_PackageDefinitions" />
-    </MSBuild>
+  <PropertyGroup>
+    <_TemplatesDirectory>$(MSBuildThisFileDirectory)tools\templates\</_TemplatesDirectory>
+    <_SrcDirectory>$(RepositoryRoot)src\</_SrcDirectory>
+    <_AllMetapackageDirectory>$(_SrcDirectory)Microsoft.AspNetCore.All\</_AllMetapackageDirectory>
+    <_ExistingManifestsDirectory>$(_AllMetapackageDirectory)build\</_ExistingManifestsDirectory>
+    <_ArtifactsZipDirectory>$(ArtifactsDir)zip\</_ArtifactsZipDirectory>
+    <_StoreZipDirectory>$(_ArtifactsZipDirectory)rs\</_StoreZipDirectory>
+    <_SymbolsZipDirectory>$(_ArtifactsZipDirectory)symbols\</_SymbolsZipDirectory>
+    <_DepsOutputDirectory>$(ArtifactsDir)deps\</_DepsOutputDirectory>
+  </PropertyGroup>
 
-    <RepoTasks.CreateCommonManifest DestinationFilePath="$(ArtifactsDir)$(CommonManifestFileName)" PackageDefinitions="@(_PackageDefinitions)" Packages="@(PackagesToTrim)"/>
-  </Target>
-
-  <Target Name="AddManifestsToMetapackage">
-    <ItemGroup>
-      <MetaPackageNupkg Include="$(_DependencyBuildDirectory)Microsoft.AspNetCore.All.*.nupkg" />
-      <ManifestFiles Include="$(ArtifactsDir)*.xml"/>
-    </ItemGroup>
-
-    <RemoveDir Directories="$(_WorkRoot)" />
-    <UnzipArchive File="%(MetaPackageNupkg.FullPath)" Destination="$(_WorkRoot)" />
-
-    <!-- Create a consolidated manifest and place in metapackage -->
-    <RepoTasks.ConsolidateManifests
-      Manifests="@(ManifestFiles)"
-      ManifestDestination="$(_WorkRoot)\build\aspnetcore-store-$(PackageVersion).xml"/>
-
-    <ItemGroup>
-      <ArchiveFiles Include="$(_WorkRoot)**\*" />
-    </ItemGroup>
-
-    <ZipArchive File="$(ArtifactsDir)%(MetaPackageNupkg.FileName)%(MetaPackageNupkg.Extension)" SourceFiles="@(ArchiveFiles)" WorkingDirectory="$(_WorkRoot)" Overwrite="true" />
-  </Target>
 </Project>

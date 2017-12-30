@@ -9,6 +9,7 @@
     <Configurations Condition="'$(Configurations)'==''">Debug;Release</Configurations>
     <Platforms Condition="'$(Platforms)'==''">AnyCPU</Platforms>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <Platform Condition="'$(Platform)'=='' AND '$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</Platform>
     <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
     <PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
 

@@ -1,10 +1,28 @@
 <Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
 
+  <Import Project="..\..\build\artifacts.props" />
+
   <PropertyGroup>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>win-x86;win-x64;osx-x64;linux-x64</Platforms>
+
+    <!-- Platforms are determined by host OS because crossgen does not support cross-platform native optimization -->
+    <Platforms Condition="$([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-x86</Platforms>
+    <Platforms Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux-x64</Platforms>
+    <Platforms Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx-x64</Platforms>
+
+    <!-- Map platform to the RID we have to used to build the runtime store -->
+    <RuntimeIdentifier Condition="'$(Platform)' == 'win-x64'">win7-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'win-x86'">win7-x86</RuntimeIdentifier>
+    <RuntimeIdentifier>$(Platform)</RuntimeIdentifier>
+
+    <RuntimeStorePackageId>Microsoft.AspNetCore.All</RuntimeStorePackageId>
+    <RuntimeStoreTargetFramework>netcoreapp2.0</RuntimeStoreTargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\*.repoproj" />
+  </ItemGroup>
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <Import Project="RuntimeStore.targets" />

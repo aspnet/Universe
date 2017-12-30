@@ -98,6 +98,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A7FF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Partners", "Partners", "{70D9B094-74EE-4052-A545-45981DE7D83D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installers", "Installers", "{3D6F469A-89E8-4CFD-ADC1-006E8ADBBD91}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RuntimeStore", "RuntimeStore", "{468E4AD6-EF4C-4259-B0B2-97B2CBFFD015}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeStore", "src\RuntimeStore\RuntimeStore.proj", "{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|linux-x64 = Debug|linux-x64
@@ -814,6 +820,22 @@ Global
 		{E2A18F67-482B-4B64-8FC9-2C60509EF38B}.Release|win-x64.Build.0 = Release|Any CPU
 		{E2A18F67-482B-4B64-8FC9-2C60509EF38B}.Release|win-x86.ActiveCfg = Release|Any CPU
 		{E2A18F67-482B-4B64-8FC9-2C60509EF38B}.Release|win-x86.Build.0 = Release|Any CPU
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|linux-x64.ActiveCfg = Debug|linux-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|linux-x64.Build.0 = Debug|linux-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|osx-x64.ActiveCfg = Debug|osx-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|osx-x64.Build.0 = Debug|osx-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|win-x64.ActiveCfg = Debug|win-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|win-x64.Build.0 = Debug|win-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|win-x86.ActiveCfg = Debug|win-x86
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Debug|win-x86.Build.0 = Debug|win-x86
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|linux-x64.ActiveCfg = Release|linux-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|linux-x64.Build.0 = Release|linux-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|osx-x64.ActiveCfg = Release|osx-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|osx-x64.Build.0 = Release|osx-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|win-x64.ActiveCfg = Release|win-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|win-x64.Build.0 = Release|win-x64
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|win-x86.ActiveCfg = Release|win-x86
+		{6D3C49C0-99B4-456A-850F-D64CDE2D66DC}.Release|win-x86.Build.0 = Release|win-x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -866,6 +888,9 @@ Global
 		{C3229682-9150-4E4A-BF29-9B1E92B6FFF1} = {D7AFA165-BB36-4DE9-80B3-69C00E862B81}
 		{A7FFFC63-E8ED-46D3-86C0-FEE4449BD4D7} = {D7AFA165-BB36-4DE9-80B3-69C00E862B81}
 		{70D9B094-74EE-4052-A545-45981DE7D83D} = {D7AFA165-BB36-4DE9-80B3-69C00E862B81}
+		{3D6F469A-89E8-4CFD-ADC1-006E8ADBBD91} = {D7AFA165-BB36-4DE9-80B3-69C00E862B81}
+		{468E4AD6-EF4C-4259-B0B2-97B2CBFFD015} = {D7AFA165-BB36-4DE9-80B3-69C00E862B81}
+        {6D3C49C0-99B4-456A-850F-D64CDE2D66DC} = {468E4AD6-EF4C-4259-B0B2-97B2CBFFD015}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9407DD41-F7B5-4084-AEE3-129ABDDBC3DD}

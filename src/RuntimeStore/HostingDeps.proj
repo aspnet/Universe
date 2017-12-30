@@ -1,0 +1,35 @@
+    <!-- OLD -->
+
+  <PropertyGroup>
+    <_BuildScriptsDirectory>$(MSBuildThisFileDirectory)tools\scripts\</_BuildScriptsDirectory>
+    <_RuntimeStoreWorkDirectory>$(IntermediateOutputPath).rw\</_RuntimeStoreWorkDirectory>
+    <_RuntimeStoreOutputDirectory>$(IntermediateOutputPath).ro\</_RuntimeStoreOutputDirectory>
+    <_TemplatesDirectory>$(MSBuildThisFileDirectory)tools\templates\</_TemplatesDirectory>
+    <_SrcDirectory>$(RepositoryRoot)src\</_SrcDirectory>
+    <_AllMetapackageDirectory>$(_SrcDirectory)Microsoft.AspNetCore.All\</_AllMetapackageDirectory>
+    <_ExistingManifestsDirectory>$(_AllMetapackageDirectory)build\</_ExistingManifestsDirectory>
+    <_ArtifactsZipDirectory>$(ArtifactsDir)zip\</_ArtifactsZipDirectory>
+    <_StoreZipDirectory>$(_ArtifactsZipDirectory)rs\</_StoreZipDirectory>
+    <_SymbolsZipDirectory>$(_ArtifactsZipDirectory)symbols\</_SymbolsZipDirectory>
+    <_DepsOutputDirectory>$(ArtifactsDir)deps\</_DepsOutputDirectory>
+  </PropertyGroup>
+
+  <Target Name="BuildHostingDeps" DependsOnTargets="ResolveRepoInfo">
+    <!-- Generate RS.Reference project -->
+    <RepoTasks.ResolveHostingStartupPackages
+      BuildArtifacts="@(ArtifactInfo)"
+      PackageArtifacts="@(PackageArtifact)">
+      <Output TaskParameter="HostingStartupArtifacts" ItemName="HostingStartupArtifacts" />
+    </RepoTasks.ResolveHostingStartupPackages>
+
+    <!--- MSBuild caches things if you run inproc so have to use Exec -->
+    <MSBuild Projects="$(_TemplatesDirectory)HostingStartup/HostingStartup.csproj"
+             Targets="Restore;Rebuild;CollectDeps"
+             Properties="DepsOutputPath=$(_DepsOutputDirectory);HostingStartupPackageName=%(HostingStartupArtifacts.PackageId);HostingStartupPackageVersion=%(HostingStartupArtifacts.Version);RuntimeFrameworkVersion=$(MicrosoftNETCoreApp20PackageVersion)" />
+
+    <ItemGroup>
+      <DepsFiles Include="$(_DepsOutputDirectory)**\*.deps.json" />
+    </ItemGroup>
+
+    <RepoTasks.TrimDeps DepsFiles="@(DepsFiles)" />
+  </Target>

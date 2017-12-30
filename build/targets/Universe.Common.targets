@@ -1,8 +1,15 @@
 <Project>
   <PropertyGroup>
-      <OutputType />
-      <PrepareResourceNamesDependsOn />
-      <CoreBuildDependsOn />
+    <OutputType />
+    <PrepareResourceNamesDependsOn />
+    <CoreBuildDependsOn />
+
+      <!-- Fallbacks, in case RestorePackagesPath hasn't been set. (It should be set in Directory.Build.props) -->
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == ''">$(MSBuildThisFileDirectory)..\..\obj\nuget\packages\</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(USERPROFILE)' != ''">$(USERPROFILE).nuget\packages\</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(HOME)' != ''">$(HOME).nuget\packages\</RestorePackagesPath>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == '' AND '$(HOMEDRIVE)' != ''">$(HOMEDRIVE).nuget\packages\</RestorePackagesPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Version)' == '' ">
@@ -11,10 +18,20 @@
     <Version Condition=" '$(Version)' == '' ">$(VersionPrefix)</Version>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">$(Version)</PackageVersion>
+  </PropertyGroup>
+
   <Target Name="GetProjectReferences" DependsOnTargets="$(GetProjectReferencesDependsOn)" Returns="@(_ProjectReferenceFullPath)">
     <ItemGroup>
       <_ProjectReferenceFullPath Include="%(ProjectReference.FullPath)" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="ResolveArtifactReferences">
+    <RemoveDuplicates Inputs="@(_ResolvedProjectReferencePaths)">
+      <Output TaskParameter="Filtered" ItemName="ArtifactReference" />
+    </RemoveDuplicates>
   </Target>
 
   <!-- Override the default GetTargetPath target -->
@@ -24,5 +41,17 @@
   <Target Name="Build"
     DependsOnTargets="$(BuildDependsOn)"
     Returns="@(Artifact)" />
+
+
+  <Target Name="_CheckForUnsupportedPlatform"
+    BeforeTargets="$(BuildDependsOn);Build;$(RebuildDependsOn);Rebuild;$(CleanDependsOn);Clean">
+
+    <Error Text="Platform is not defined." Condition="'$(Platform)' == ''"/>
+    <ItemGroup>
+      <_SupportedPlatforms Include="$(Platforms)" />
+    </ItemGroup>
+
+    <Error Text="Platform '$(Platform)' is not a supported platform. Support platforms are: @(_SupportedPlatforms, ', ')" Condition="@(_SupportedPlatforms->WithMetadataValue('Identity', $(Platform))->Count()) == 0"/>
+  </Target>
 
 </Project>
