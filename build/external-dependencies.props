@@ -197,6 +197,29 @@ not building again in this patch.
 
   <!-- Shipped dependencies from previous builds -->
 
+  <!-- 2.0.9 -->
+  <ItemGroup>
+    <ExternalDependency Include="Microsoft.AspNet.Identity.AspNetCoreCompat" Category="ship" Version="0.3.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.ApplicationInsights.HostingStartup" Metapackage="true" RuntimeStore="true" HostingStartup="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.AzureAppServices.HostingStartup" Metapackage="true" RuntimeStore="true" HostingStartup="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.AzureAppServices.SiteExtension" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.AzureAppServicesIntegration" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Identity.Specification.Tests" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Identity" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Server.Kestrel.Core" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Server.Kestrel.Https" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets" Category="noship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore.Server.Kestrel" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.AspNetCore" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.Extensions.Identity.Core" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.Extensions.Identity.Stores" Metapackage="true" RuntimeStore="true" Category="ship" Version="2.0.4" />
+    <ExternalDependency Include="Microsoft.Web.Xdt.Extensions" Category="shipoob" Version="2.0.4" />
+  </ItemGroup>
+
   <!-- 2.0.8 -->
   <ItemGroup>
     <ExternalDependency Include="Microsoft.AspNetCore.Antiforgery" Version="2.0.3" Metapackage="true" RuntimeStore="true" Category="ship" />

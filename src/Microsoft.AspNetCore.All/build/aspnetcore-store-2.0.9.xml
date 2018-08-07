@@ -1,0 +1,15 @@
+<StoreArtifacts>
+  <Package Id="microsoft.aspnetcore" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.applicationinsights.hostingstartup" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.azureappservices.hostingstartup" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.azureappservicesintegration" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.identity" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.identity.entityframeworkcore" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.server.kestrel" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.server.kestrel.core" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.server.kestrel.https" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.server.kestrel.transport.abstractions" Version="2.0.4" />
+  <Package Id="microsoft.aspnetcore.server.kestrel.transport.libuv" Version="2.0.4" />
+  <Package Id="microsoft.extensions.identity.core" Version="2.0.4" />
+  <Package Id="microsoft.extensions.identity.stores" Version="2.0.4" />
+</StoreArtifacts>

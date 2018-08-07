@@ -6,12 +6,6 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <!-- Repos being patched -->
-    <Repository Include="Identity" />
-    <Repository Include="AzureIntegration" />
-    <Repository Include="KestrelHttpServer" />
-    <Repository Include="MetaPackages" />
-
     <!--
     Repos not building this patch.
     Build tools will *verify* that these repos will be unaffected
@@ -19,6 +13,7 @@
     -->
 
     <ShippedRepository Include="Antiforgery" />
+    <ShippedRepository Include="AzureIntegration" />
     <ShippedRepository Include="BasicMiddleware" />
     <ShippedRepository Include="BrowserLink" />
     <ShippedRepository Include="Caching" />
@@ -36,11 +31,14 @@
     <ShippedRepository Include="HtmlAbstractions" />
     <ShippedRepository Include="HttpAbstractions" />
     <ShippedRepository Include="HttpSysServer" />
+    <ShippedRepository Include="Identity" />
     <ShippedRepository Include="IISIntegration" />
     <ShippedRepository Include="JavaScriptServices" />
     <ShippedRepository Include="JsonPatch" />
+    <ShippedRepository Include="KestrelHttpServer" />
     <ShippedRepository Include="Localization" />
     <ShippedRepository Include="Logging" />
+    <ShippedRepository Include="MetaPackages" />
     <ShippedRepository Include="Microsoft.Data.Sqlite" />
     <ShippedRepository Include="Mvc" />
     <ShippedRepository Include="MvcPrecompilation" />
