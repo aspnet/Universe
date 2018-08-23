@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\Security\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\Security\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Caching.repoproj" />

@@ -1,7 +1,7 @@
 <Project>
   <ImportGroup Condition="'$(MSBuildProjectExtension)' != '.csproj'">
-    <Import Project="$(MSBuildThisFileDirectory)build\targets\Universe.Common.targets" />
-    <Import Project="$(MSBuildThisFileDirectory)build\targets\Repository.Common.targets" Condition="'$(MSBuildProjectExtension)' == '.repoproj'" />
+    <Import Project="eng\targets\Universe.Common.targets" />
+    <Import Project="eng\targets\Repository.Common.targets" Condition="'$(MSBuildProjectExtension)' == '.repoproj'" />
     <Import Project="eng\targets\Wix.Common.targets"  Condition="'$(MSBuildProjectExtension)' == '.wixproj'" />
   </ImportGroup>
 

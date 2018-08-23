@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\Session\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\Session\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Caching.repoproj" />

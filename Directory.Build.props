@@ -19,15 +19,14 @@
     <PackageOutputPath>$(ArtifactsConfigurationDir)packages\</PackageOutputPath>
   </PropertyGroup>
 
-  <ImportGroup Condition="'$(MSBuildProjectExtension)' != '.csproj'">
-    <Import Project="version.props" />
-    <Import Project="build\dependencies.props" />
-    <Import Project="build\tasks\RepoTasks.tasks" />
-    <Import Project="build\targets\Universe.Common.props" />
-    <Import Project="build\targets\Repository.Common.props" Condition="'$(MSBuildProjectExtension)' == '.repoproj'" />
-    <Import Project="eng\targets\Wix.Common.props"  Condition="'$(MSBuildProjectExtension)' == '.wixproj'" />
-  </ImportGroup>
-
+  <Import Project="version.props" />
   <Import Project="build\external-dependencies.props" />
   <Import Project="build\sources.props" />
+
+  <ImportGroup Condition="'$(MSBuildProjectExtension)' != '.csproj'">
+    <Import Project="build\tasks\RepoTasks.tasks" />
+    <Import Project="eng\targets\Universe.Common.props" />
+    <Import Project="eng\targets\Repository.Common.props" Condition="'$(MSBuildProjectExtension)' == '.repoproj'" />
+    <Import Project="eng\targets\Wix.Common.props"  Condition="'$(MSBuildProjectExtension)' == '.wixproj'" />
+  </ImportGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\HttpAbstractions\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\HttpAbstractions\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Common.repoproj" />

@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\DataProtection\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\DataProtection\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Common.repoproj" />

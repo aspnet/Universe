@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\CORS\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\CORS\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Configuration.repoproj" />

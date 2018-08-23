@@ -1,10 +1,10 @@
 <Project>
   <PropertyGroup>
-    <RepositoryRoot Condition=" ! $([System.IO.Path]::IsPathRooted($(RepositoryRoot)))">$(MSBuildProjectDirectory)\$(RepositoryRoot)</RepositoryRoot>
-    <RepositoryRoot>$([MSBuild]::NormalizeDirectory($(RepositoryRoot)))</RepositoryRoot>
+    <SubmoduleRoot Condition=" ! $([System.IO.Path]::IsPathRooted($(SubmoduleRoot)))">$(MSBuildProjectDirectory)\$(SubmoduleRoot)</SubmoduleRoot>
+    <SubmoduleRoot>$([MSBuild]::NormalizeDirectory($(SubmoduleRoot)))</SubmoduleRoot>
 
-    <BuildScript Condition="'$(OS)'!='Windows_NT'">$(RepositoryRoot)build.sh</BuildScript>
-    <BuildScript Condition="'$(OS)'=='Windows_NT'">$(RepositoryRoot)build.cmd</BuildScript>
+    <BuildScript Condition="'$(OS)'!='Windows_NT'">$(SubmoduleRoot)build.sh</BuildScript>
+    <BuildScript Condition="'$(OS)'=='Windows_NT'">$(SubmoduleRoot)build.cmd</BuildScript>
     <BuildArgs>$(BuildArgs) /clp:NoSummary</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:GenerateFullPaths=true</BuildArgs>
     <BuildArgs Condition="'$(RestorePackagesPath)' != ''">$(BuildArgs) /p:RestorePackagesPath=$(RestorePackagesPath)</BuildArgs>
@@ -13,13 +13,7 @@
       GetTargetPath;
     </CoreBuildDependsOn>
 
-    <CoreBuildDependsOn Condition="'$(UseBuildCache)' == 'true' AND '$(DesignTimeBuild)' != 'true' ">
-      $(CoreBuildDependsOn);
-      ResolveReferences;
-      DownloadFromBuildCache;
-    </CoreBuildDependsOn>
-
-    <CoreBuildDependsOn Condition="'$(UseBuildCache)' != 'true' AND '$(DesignTimeBuild)' != 'true' ">
+    <CoreBuildDependsOn Condition=" '$(DesignTimeBuild)' != 'true' ">
       $(CoreBuildDependsOn);
       ResolveReferences;
       GeneratePropsFiles;
@@ -54,6 +48,8 @@
     <GeneratedRestoreSourcePropsPath>$(IntermediateOutputPath)sources.g.props</GeneratedRestoreSourcePropsPath>
   </PropertyGroup>
 
+  <UsingTask TaskName="KoreBuild.Tasks.GeneratePackageVersionPropsFile" AssemblyFile="$(KoreBuildTasksDll)" />
+
   <Target Name="GeneratePropsFiles" DependsOnTargets="ResolveReferences">
     <ItemGroup>
       <_RestoreFileReferences Include="%(ArtifactReference.PackageId)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' ">
@@ -65,16 +61,35 @@
       <_RestoreSources Include="%(ArtifactReference.RootDir)%(ArtifactReference.Directory)" Condition=" '%(ArtifactReference.ArtifactType)' == 'NuGetPackage' " />
     </ItemGroup>
 
-    <RepoTasks.GeneratePackageVersionPropsFile
-      Packages="@(_RestoreFileReferences)"
+    <GeneratePackageVersionPropsFile
+      Packages="@(_RestoreFileReferences);@(ExternalDependency)"
       OutputPath="$(GeneratedPackageVersionPropsPath)" />
 
     <RepoTasks.GenerateRestoreSourcesPropsFile
-      Sources="@(_RestoreSources)"
+      Sources="@(_RestoreSources);$(RestoreSources)"
       OutputPath="$(GeneratedRestoreSourcePropsPath)" />
   </Target>
 
-  <Target Name="CoreCompile">
+  <PropertyGroup>
+    <SourceLockFile>$(RepositoryRoot)korebuild-lock.txt</SourceLockFile>
+    <RepoLockFile>$(SubmoduleRoot)korebuild-lock.txt</RepoLockFile>
+    <BackupRepoLockFile>$(IntermediateOutputPath)korebuild-lock.txt</BackupRepoLockFile>
+  </PropertyGroup>
+
+  <Target Name="_UpdateRepoLockFile">
+    <!-- Copy Korebuild lock file to individual repos to align version if the repo doesn't already have one -->
+    <Message Text="Copying KoreBuild lockfile from Universe to repository $(BuildRepositoryRoot)"/>
+    <Move SourceFiles="$(RepoLockFile)" DestinationFiles="$(BackupRepoLockFile)" Condition="Exists($(RepoLockFile))" />
+    <Copy SourceFiles="$(SourceLockFile)" DestinationFiles="$(RepoLockFile)" />
+  </Target>
+
+  <Target Name="_RestoreOriginalRepoLockFile">
+    <!-- Restore original Korebuild lock file -->
+    <Delete Files="$(RepoLockFile)" ContinueOnError="true" />
+    <Move SourceFiles="$(BackupRepoLockFile)" DestinationFiles="$(RepoLockFile)" Condition="Exists($(BackupRepoLockFile))"  />
+  </Target>
+
+  <Target Name="CoreCompile" DependsOnTargets="_UpdateRepoLockFile">
     <PropertyGroup>
       <!-- Should reduce allowable package feeds to only nuget.org. -->
       <BuildArgs>$(BuildArgs) /p:AspNetUniverseBuildOffline=true</BuildArgs>
@@ -86,17 +101,28 @@
       <BuildArgs>$(BuildArgs) /p:IsFinalBuild=$(IsFinalBuild)</BuildArgs>
       <BuildArgs>$(BuildArgs) /t:Package</BuildArgs>
       <BuildArgs>$(BuildArgs) /t:VerifyPackages</BuildArgs>
+      <BuildArgs>$(BuildArgs) /noconsolelogger '/l:RepoTasks.FlowLogger,$(_RepoTaskAssembly);Summary;FlowId=$(MSBuildProjectName)'</BuildArgs>
+      <BuildArgs>$(BuildArgs) '/p:DotNetAssetRootAccessTokenSuffix=$(DotNetAssetRootAccessTokenSuffix)'</BuildArgs>
+      <BuildArgs>$(BuildArgs) '/p:DotNetAssetRootUrl=$(DotNetAssetRootUrl)'</BuildArgs>
     </PropertyGroup>
 
-    <Copy SourceFiles="$(UniverseRepositoryRoot)korebuild-lock.txt" DestinationFolder="$(RepositoryRoot)" />
     <Message Text="Compiling $(MSBuildProjectName)" Importance="High" />
+
     <Exec Command="$(BuildScript) $(BuildArgs)"
-          WorkingDirectory="$(RepositoryRoot)"
-          StandardOutputImportance="Normal"
-          EnvironmentVariables="NUGET_PACKAGES=$(RestorePackagesPath)" />
+          WorkingDirectory="$(SubmoduleRoot)"
+          EnvironmentVariables="NUGET_PACKAGES=$(RestorePackagesPath)"
+          IgnoreExitCode="true"
+          ContinueOnError="WarnAndContinue">
+      <Output TaskParameter="ExitCode" PropertyName="BuildExitCode" />
+    </Exec>
+
+    <CallTarget Targets="_RestoreOriginalRepoLockFile" />
+
+    <!-- Fail if build.cmd didn't exit code 0 or process failed to start. -->
+    <Error Text="Building $(MSBuildProjectName) failed: $(_BuildScriptToExecute) exited code $(BuildExitCode)" Condition=" '$(BuildExitCode)' != '0' " />
 
     <ItemGroup>
-      <_CompileOutputs Include="$(RepositoryRoot)artifacts\**\*" />
+      <_CompileOutputs Include="$(SubmoduleRoot)artifacts\**\*" />
     </ItemGroup>
 
     <!-- TODO: consider writing directly to output path instead of copying. There were problems with trailing slashes :( -->
@@ -105,14 +131,14 @@
     <Message Text="$(MSBuildProjectName) -> %(Artifact.FullPath)" Condition="'%(Artifact.Identity)' != ''" Importance="High" />
 
     <!-- Clean the local nuget cache -->
-    <RemoveDir Directories="$(RestorePackagesPath)\%(Artifact.PackageId)\%(Version)\" Condition="'%(ArtifactType)' == 'NuGetPackage'" />
+    <RemoveDir Directories="$(RestorePackagesPath)\%(Artifact.PackageId)\%(Artifact.Version)\" Condition="'%(Artifact.ArtifactType)' == 'NuGetPackage'" />
   </Target>
 
   <Target Name="CleanRepo">
     <Error Text="KoreBuildProjectFullPath is not defined" Condition="'$(KoreBuildProjectFullPath)' == ''" />
     <MSBuild Projects="$(KoreBuildProjectFullPath)"
              Targets="Clean"
-             Properties="RepositoryRoot=$(RepositoryRoot)" />
+             Properties="SubmoduleRoot=$(SubmoduleRoot)" />
   </Target>
 
   <Target Name="DownloadFromBuildCache" DependsOnTargets="ResolveArtifacts">
@@ -150,7 +176,7 @@
     <Error Text="KoreBuildProjectFullPath is not defined" Condition="'$(KoreBuildProjectFullPath)' == ''" />
     <MSBuild Projects="$(KoreBuildProjectFullPath)"
              Targets="GetArtifactInfo"
-             Properties="RepositoryRoot=$(RepositoryRoot);ArtifactsDir=$(OutputPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=$(IsFinalBuild)">
+             Properties="SubmoduleRoot=$(SubmoduleRoot);ArtifactsDir=$(OutputPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=$(IsFinalBuild);DesignTimeBuild=true">
       <Output TaskParameter="TargetOutputs" ItemName="Artifact" />
     </MSBuild>
   </Target>

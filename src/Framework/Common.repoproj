@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\Common\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\Common\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

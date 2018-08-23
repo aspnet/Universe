@@ -1,4 +1,4 @@
-<Project>
+<Project InitialTargets="GenerateKoreBuildPropsFile">
   <Import Project="AzureIntegration.targets" />
   <Import Project="SharedFx.targets" />
   <Import Project="SharedFxInstaller.targets" />
@@ -23,11 +23,19 @@
   </PropertyGroup>
 
   <Target Name="GenerateKoreBuildPropsFile">
-    <ItemGroup>
-      <_KoreBuildPropsFile Include="%3CProject>%3CPropertyGroup>%3CKoreBuildProjectFullPath>$(MSBuildProjectFullPath)%3C/KoreBuildProjectFullPath>%3C/PropertyGroup>%3C/Project>" />
-    </ItemGroup>
+    <PropertyGroup>
+      <_KoreBuildPropsFile><![CDATA[
+<Project>
+  <PropertyGroup>
+    <KoreBuildProjectFullPath>$(MSBuildProjectFullPath)</KoreBuildProjectFullPath>
+    <KoreBuildTasksDll>$(KoreBuildTasksDll)</KoreBuildTasksDll>
+    <KoreBuildVersion>$(KoreBuildVersion)</KoreBuildVersion>
+  </PropertyGroup>
+</Project>
+]]></_KoreBuildPropsFile>
+    </PropertyGroup>
     <MakeDir Directories="$(IntermediateDir)" />
-    <WriteLinesToFile File="$(IntermediateDir)korebuild.g.props" Lines="@(_KoreBuildPropsFile)" Overwrite="true" />
+    <WriteLinesToFile File="$(IntermediateDir)korebuild.g.props" Lines="$(_KoreBuildPropsFile)" Overwrite="true" />
   </Target>
 
   <Target Name="PrepareOutputPaths">

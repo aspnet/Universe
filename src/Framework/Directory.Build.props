@@ -1,10 +1,6 @@
 <Project>
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove('$(MSBuildThisFileDirectory)..\', 'Directory.Build.props'))\Directory.Build.props" />
 
-  <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.repoproj'">
-    <ProjectReference Include="..\Partners\Mirror.proj" />
-  </ItemGroup>
-
   <PropertyGroup>
     <FallbackNuGetArtifactSource>https://dotnet.myget.org/F/aspnetcore-master/api/v3/index.json</FallbackNuGetArtifactSource>
     <NuGetArtifactSource>https://api.nuget.org/v3/index.json</NuGetArtifactSource>

@@ -1,7 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\Microsoft.Data.Sqlite\</RepositoryRoot>
+    <SubmoduleRoot>..\..\modules\Microsoft.Data.Sqlite\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

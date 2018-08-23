@@ -1,11 +1,7 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\Templating\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
-
-    <BuildArgs>$(BuildArgs) /p:MicrosoftAspNetCoreAllPackageVersion=$(PackageVersion)</BuildArgs>
+    <SubmoduleRoot>..\..\modules\Templating\</SubmoduleRoot>
   </PropertyGroup>
   <ItemGroup>
     <!-- Templating depends on the entire framework -->

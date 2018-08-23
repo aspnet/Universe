@@ -22,7 +22,7 @@ namespace RepoTasks.CodeGen
             {
                 repositoryRoot += '\\';
             }
-            propGroup.AddProperty("RepositoryRoot", repositoryRoot);
+            propGroup.AddProperty("SubmoduleRoot", repositoryRoot);
             _doc.AddItemGroup();
             _doc.PrependChild(import);
             _doc.AddImport(@"$(MSBuildToolsPath)\Microsoft.Common.targets");
