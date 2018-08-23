@@ -27,7 +27,6 @@ namespace RepoTasks.ProjectModel
             Projects = projects ?? throw new ArgumentNullException(nameof(projects));
             ShouldBuild = shouldBuild;
             IsPatching = isPatching;
-
             foreach (var proj in Projects)
             {
                 proj.SolutionInfo = this;

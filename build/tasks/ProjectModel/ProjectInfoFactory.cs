@@ -93,7 +93,7 @@ namespace RepoTasks.ProjectModel
             var globalProps = new Dictionary<string, string>()
             {
                 ["DesignTimeBuild"] = "true",
-                // Isolate the project from post-restore side effects
+                 // Isolate the project from post-restore side effects
                 ["ExcludeRestorePackageImports"] = "true",
             };
 
