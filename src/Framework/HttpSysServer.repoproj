@@ -2,14 +2,12 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\HttpSysServer\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="Common.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
     <ProjectReference Include="HttpAbstractions.repoproj" />
     <ProjectReference Include="Logging.repoproj" />
-    <ProjectReference Include="Testing.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

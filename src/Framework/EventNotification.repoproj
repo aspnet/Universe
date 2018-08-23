@@ -2,11 +2,9 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\EventNotification\</RepositoryRoot>
-    <UseBuildCache>True</UseBuildCache>
-    <IsFinalBuild>True</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="Testing.repoproj" />
+    <ProjectReference Include="Common.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

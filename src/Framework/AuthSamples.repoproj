@@ -1,19 +1,24 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\JavaScriptServices\</RepositoryRoot>
+    <RepositoryRoot>..\..\modules\AuthSamples\</RepositoryRoot>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="DependencyInjection.repoproj" />
+    <ProjectReference Include="Common.repoproj" />
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="DataProtection.repoproj" />
     <ProjectReference Include="Diagnostics.repoproj" />
-    <ProjectReference Include="FileSystem.repoproj" />
+    <ProjectReference Include="EntityFrameworkCore.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="Identity.repoproj" />
     <ProjectReference Include="IISIntegration.repoproj" />
     <ProjectReference Include="KestrelHttpServer.repoproj" />
     <ProjectReference Include="Logging.repoproj" />
+    <ProjectReference Include="MetaPackages.repoproj" />
     <ProjectReference Include="Mvc.repoproj" />
+    <ProjectReference Include="Razor.repoproj" />
+    <ProjectReference Include="Security.repoproj" />
     <ProjectReference Include="StaticFiles.repoproj" />
-    <ProjectReference Include="WebSockets.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

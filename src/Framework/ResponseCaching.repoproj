@@ -2,8 +2,6 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\ResponseCaching\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Caching.repoproj" />

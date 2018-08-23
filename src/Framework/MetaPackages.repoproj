@@ -2,10 +2,9 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\MetaPackages\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="BasicMiddleware.repoproj" />
     <ProjectReference Include="Configuration.repoproj" />
     <ProjectReference Include="Diagnostics.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />

@@ -161,9 +161,9 @@ namespace RepoTasks
             }
 
             CreateDgml(repoGraph);
+            CreateProjects(repoGraph);
             return !Log.HasLoggedErrors;
         }
-
 
         private void CreateDgml(AdjacencyMatrix repoGraph)
         {

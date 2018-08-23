@@ -2,8 +2,6 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\Security\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Caching.repoproj" />
@@ -21,7 +19,6 @@
     <ProjectReference Include="Logging.repoproj" />
     <ProjectReference Include="Options.repoproj" />
     <ProjectReference Include="StaticFiles.repoproj" />
-    <ProjectReference Include="Testing.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

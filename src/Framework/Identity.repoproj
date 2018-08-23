@@ -2,8 +2,6 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\Identity\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="BasicMiddleware.repoproj" />
@@ -12,8 +10,8 @@
     <ProjectReference Include="DataProtection.repoproj" />
     <ProjectReference Include="DependencyInjection.repoproj" />
     <ProjectReference Include="Diagnostics.repoproj" />
-    <ProjectReference Include="DotNetTools.repoproj" />
     <ProjectReference Include="EntityFrameworkCore.repoproj" />
+    <ProjectReference Include="FileSystem.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
     <ProjectReference Include="HttpAbstractions.repoproj" />
     <ProjectReference Include="IISIntegration.repoproj" />
@@ -22,10 +20,8 @@
     <ProjectReference Include="Mvc.repoproj" />
     <ProjectReference Include="Options.repoproj" />
     <ProjectReference Include="Razor.repoproj" />
-    <ProjectReference Include="Scaffolding.repoproj" />
     <ProjectReference Include="Security.repoproj" />
     <ProjectReference Include="StaticFiles.repoproj" />
-    <ProjectReference Include="Testing.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

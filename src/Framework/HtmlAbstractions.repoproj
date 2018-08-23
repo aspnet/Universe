@@ -2,13 +2,11 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\HtmlAbstractions\</RepositoryRoot>
-    <UseBuildCache>True</UseBuildCache>
-    <IsFinalBuild>True</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="Common.repoproj" />
     <ProjectReference Include="DependencyInjection.repoproj" />
     <ProjectReference Include="Options.repoproj" />
-    <ProjectReference Include="Testing.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

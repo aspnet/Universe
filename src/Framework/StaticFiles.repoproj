@@ -2,10 +2,9 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\StaticFiles\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="Common.repoproj" />
     <ProjectReference Include="FileSystem.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
     <ProjectReference Include="HtmlAbstractions.repoproj" />
@@ -14,7 +13,6 @@
     <ProjectReference Include="IISIntegration.repoproj" />
     <ProjectReference Include="KestrelHttpServer.repoproj" />
     <ProjectReference Include="Logging.repoproj" />
-    <ProjectReference Include="Testing.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

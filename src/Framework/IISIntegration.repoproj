@@ -2,8 +2,6 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\IISIntegration\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="BasicMiddleware.repoproj" />
@@ -11,6 +9,7 @@
     <ProjectReference Include="Configuration.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
     <ProjectReference Include="HttpAbstractions.repoproj" />
+    <ProjectReference Include="HttpSysServer.repoproj" />
     <ProjectReference Include="KestrelHttpServer.repoproj" />
     <ProjectReference Include="Logging.repoproj" />
     <ProjectReference Include="Options.repoproj" />

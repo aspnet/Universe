@@ -2,10 +2,9 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\AzureIntegration\</RepositoryRoot>
-    <UseBuildCache>False</UseBuildCache>
-    <IsFinalBuild>False</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="Common.repoproj" />
     <ProjectReference Include="Configuration.repoproj" />
     <ProjectReference Include="EventNotification.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />

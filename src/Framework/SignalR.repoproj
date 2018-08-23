@@ -1,17 +1,22 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\JavaScriptServices\</RepositoryRoot>
+    <RepositoryRoot>..\..\modules\SignalR\</RepositoryRoot>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="Common.repoproj" />
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="CORS.repoproj" />
     <ProjectReference Include="DependencyInjection.repoproj" />
     <ProjectReference Include="Diagnostics.repoproj" />
-    <ProjectReference Include="FileSystem.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
+    <ProjectReference Include="HttpAbstractions.repoproj" />
     <ProjectReference Include="IISIntegration.repoproj" />
     <ProjectReference Include="KestrelHttpServer.repoproj" />
     <ProjectReference Include="Logging.repoproj" />
-    <ProjectReference Include="Mvc.repoproj" />
+    <ProjectReference Include="Options.repoproj" />
+    <ProjectReference Include="Routing.repoproj" />
+    <ProjectReference Include="Security.repoproj" />
     <ProjectReference Include="StaticFiles.repoproj" />
     <ProjectReference Include="WebSockets.repoproj" />
   </ItemGroup>

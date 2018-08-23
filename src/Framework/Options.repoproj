@@ -2,8 +2,6 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\Options\</RepositoryRoot>
-    <UseBuildCache>True</UseBuildCache>
-    <IsFinalBuild>True</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="Common.repoproj" />

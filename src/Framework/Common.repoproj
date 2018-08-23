@@ -2,8 +2,6 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <RepositoryRoot>..\..\modules\Common\</RepositoryRoot>
-    <UseBuildCache>True</UseBuildCache>
-    <IsFinalBuild>True</IsFinalBuild>
   </PropertyGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

@@ -1,19 +1,20 @@
 ﻿<Project>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <RepositoryRoot>..\..\modules\JavaScriptServices\</RepositoryRoot>
+    <RepositoryRoot>..\..\modules\AADIntegration\</RepositoryRoot>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="DependencyInjection.repoproj" />
-    <ProjectReference Include="Diagnostics.repoproj" />
-    <ProjectReference Include="FileSystem.repoproj" />
+    <ProjectReference Include="BasicMiddleware.repoproj" />
+    <ProjectReference Include="Configuration.repoproj" />
+    <ProjectReference Include="DataProtection.repoproj" />
     <ProjectReference Include="Hosting.repoproj" />
     <ProjectReference Include="IISIntegration.repoproj" />
     <ProjectReference Include="KestrelHttpServer.repoproj" />
     <ProjectReference Include="Logging.repoproj" />
     <ProjectReference Include="Mvc.repoproj" />
+    <ProjectReference Include="Razor.repoproj" />
+    <ProjectReference Include="Security.repoproj" />
     <ProjectReference Include="StaticFiles.repoproj" />
-    <ProjectReference Include="WebSockets.repoproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
