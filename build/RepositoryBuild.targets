@@ -1,0 +1,35 @@
+<Project>
+
+  <ItemGroup>
+    <RepoProject Include="$(RepositoryRoot)src\*\*.repoproj" />
+  </ItemGroup>
+
+  <Target Name="BuildRepositories">
+    <MSBuild
+      Projects="@(RepoProject)"
+      BuildInParallel="true"
+      StopOnFirstFailure="true"
+      Targets="Build"
+      Properties="BuildNumber=$(BuildNumber);IsFinalBuild=$(IsFinalBuild);Configuration=$(Configuration)" />
+  </Target>
+
+  <Target Name="_TestRepositories">
+    <MSBuild
+      Projects="@(_BatchedTestRepo)"
+      BuildInParallel="$(TestProjectsInParallel)"
+      StopOnFirstFailure="false"
+      Targets="_TestRepository"
+      Properties="BuildNumber=$(BuildNumber);IsFinalBuild=$(IsFinalBuild);Configuration=$(Configuration);_NoBuildRepos=$(_NoBuildRepos)"
+      ContinueOnError="true">
+      <Output TaskParameter="TargetOutputs" ItemName="_RepoTestResults" />
+    </MSBuild>
+
+    <Warning Text="No test results were found from running repos." Condition="@(_RepoTestResults->Count()) == 0"/>
+    <Message Text="Tests passed for the following repos:%0A - @(_RepoTestResults->WithMetadataValue('Success', 'true'), '%0A - ')"
+      Importance="High"
+      Condition="@(_RepoTestResults->WithMetadataValue('Success', 'true')->Count()) != 0 " />
+    <Error Text="Tests failed for the following repos:%0A - @(_RepoTestResults->WithMetadataValue('Success', 'false'), '%0A - ')"
+      Condition="@(_RepoTestResults->WithMetadataValue('Success', 'false')->Count()) != 0 " />
+  </Target>
+
+</Project>

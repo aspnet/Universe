@@ -2,6 +2,7 @@
   <Import Project="obj\korebuild.g.props" Condition="Exists('obj\korebuild.g.props') AND '$(MSBuildProjectExtension)' != '.csproj'" />
 
   <PropertyGroup>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
     <Product>Microsoft ASP.NET Core</Product>
     <RepositoryUrl>https://github.com/aspnet/Universe</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -11,7 +12,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
     <RestorePackagesPath>$(MSBuildThisFileDirectory)obj\nuget\</RestorePackagesPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath>$(MSBuildThisFileDirectory)bin\$(MSBuildProjectName)\</BaseOutputPath>
@@ -20,6 +20,7 @@
     <ArtifactsConfigurationDir>$(ArtifactsDir)$(Configuration)\</ArtifactsConfigurationDir>
     <ArtifactsBinDir>$(ArtifactsConfigurationDir)bin\</ArtifactsBinDir>
     <PackageOutputPath>$(ArtifactsConfigurationDir)packages\</PackageOutputPath>
+    <LogOutputDir>$(ArtifactsDir)logs\</LogOutputDir>
   </PropertyGroup>
 
   <Import Project="version.props" />
