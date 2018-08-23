@@ -1,8 +1,6 @@
 <!--
-
 The targets in this file should not be executed from a CI build.
 They are meant to be used by developers to update the ASP.NET Core configuration.
-
 -->
 <Project>
 

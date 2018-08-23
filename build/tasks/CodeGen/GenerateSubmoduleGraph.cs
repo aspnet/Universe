@@ -190,6 +190,39 @@ namespace RepoTasks
             dgml.Save(Path.Combine(RepositoryRoot, "modules", "SubmoduleGraph.dgml"));
         }
 
+        private void CreateProjects(AdjacencyMatrix slnGraph)
+        {
+            var root = Path.Combine(RepositoryRoot, "src", "Framework");
+            Directory.CreateDirectory(root);
+
+            var repos = Repositories.ToDictionary(i => i.ItemSpec, i => i, StringComparer.OrdinalIgnoreCase);
+
+            for (var i = 0; i < slnGraph.Count; i++)
+            {
+                var sln = slnGraph[i];
+                var repoName = Path.GetFileName(sln.Directory);
+                var dest = Path.Combine(root, repoName + ".repoproj");
+                var repo = repos[repoName];
+                var repoRootRelative = Path.GetRelativePath(Path.GetDirectoryName(dest), sln.Directory);
+                var repoproj = new RepositoryProject(repoRootRelative);
+
+                for (var j = 0; j < slnGraph.Count; j++)
+                {
+                    if (j == i) continue;
+                    if (slnGraph.HasLink(i, j))
+                    {
+                        var target = slnGraph[j];
+                        var targetRepoName = Path.GetFileName(target.Directory);
+                        var targetSlnProj = targetRepoName + ".repoproj";
+                        var targetRepo = repos[targetRepoName];
+                        repoproj.AddProjectReference(targetSlnProj);
+                    }
+                }
+
+                repoproj.Save(dest);
+            }
+        }
+
         private class AdjacencyMatrix
         {
             private readonly bool[,] _matrix;
