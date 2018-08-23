@@ -2,19 +2,17 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using NuGet.Frameworks;
 using NuGet.Versioning;
-using RepoTools.BuildGraph;
 using RepoTasks.ProjectModel;
 using RepoTasks.Utilities;
+using RepoTools.BuildGraph;
 
 namespace RepoTasks
 {
@@ -32,12 +30,13 @@ namespace RepoTasks
         public ITaskItem[] Artifacts { get; set; }
 
         [Required]
+        public ITaskItem[] Repositories { get; set; }
+
+        [Required]
         public ITaskItem[] Dependencies { get; set; }
 
         [Required]
         public string Properties { get; set; }
-
-        public string StartGraphAt { get; set; }
 
         /// <summary>
         /// The order in which to build repositories
@@ -69,6 +68,18 @@ namespace RepoTasks
             var solutions = factory.Create(Solutions, props, defaultConfig, _cts.Token);
             Log.LogMessage($"Found {solutions.Count} and {solutions.Sum(p => p.Projects.Count)} projects");
 
+            var policies = new Dictionary<string, PatchPolicy>();
+            foreach (var repo in Repositories)
+            {
+                policies.Add(repo.ItemSpec, Enum.Parse<PatchPolicy>(repo.GetMetadata("PatchPolicy")));
+            }
+
+            foreach (var solution in solutions)
+            {
+                var repoName = Path.GetFileName(solution.Directory);
+                solution.PatchPolicy = policies[repoName];
+            }
+
             if (_cts.IsCancellationRequested)
             {
                 return false;
@@ -93,46 +104,52 @@ namespace RepoTasks
         {
             // ensure versions cascade
             var buildPackageMap = packages.ToDictionary(p => p.PackageInfo.Id, p => p, StringComparer.OrdinalIgnoreCase);
-            var dependencyMap = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+            var dependencyMap = new Dictionary<string, List<ExternalDependency>>(StringComparer.OrdinalIgnoreCase);
             foreach (var dep in Dependencies)
             {
                 if (!dependencyMap.TryGetValue(dep.ItemSpec, out var versions))
                 {
-                    dependencyMap[dep.ItemSpec] = versions = new List<string>();
+                    dependencyMap[dep.ItemSpec] = versions = new List<ExternalDependency>();
                 }
-                else if (dep.GetMetadata("NoWarn") == null || dep.GetMetadata("NoWarn").IndexOf("KRB" + KoreBuildErrors.MultipleExternalDependencyVersions) < 0)
+
+                versions.Add(new ExternalDependency
                 {
-                    Log.LogKoreBuildWarning(
-                        KoreBuildErrors.MultipleExternalDependencyVersions,
-                        message: $"Multiple versions of external dependency '{dep.ItemSpec}' are defined. In most cases, there should only be one version of external dependencies.");
-                }
-                versions.Add(dep.GetMetadata("Version"));
+                    PackageId = dep.ItemSpec,
+                    Version = dep.GetMetadata("Version"),
+                });
             }
 
             var inconsistentVersions = new List<VersionMismatch>();
-            var reposThatShouldPatch = new HashSet<string>();
 
-            // TODO cleanup the 4-deep nested loops
             foreach (var solution in solutions)
             foreach (var project in solution.Projects)
             foreach (var tfm in project.Frameworks)
             foreach (var dependency in tfm.Dependencies)
             {
+                var dependencyVersion = dependency.Value.Version;
                 if (!buildPackageMap.TryGetValue(dependency.Key, out var package))
                 {
                     // This dependency is not one of the packages that will be compiled by this run of Universe.
+                    // Must match an external dependency, including its Version.
+                    var idx = -1;
                     if (!dependencyMap.TryGetValue(dependency.Key, out var externalVersions)
-                        || !externalVersions.Contains(dependency.Value.Version))
+                        || (idx = externalVersions.FindIndex(0, externalVersions.Count, i => i.Version == dependencyVersion)) < 0)
                     {
                         Log.LogKoreBuildError(
                             project.FullPath,
                             KoreBuildErrors.UndefinedExternalDependency,
-                            message: $"Undefined external dependency on {dependency.Key}/{dependency.Value.Version}");
+                            message: $"Undefined external dependency on {dependency.Key}/{dependencyVersion}");
+                    }
+
+                    if (idx >= 0)
+                    {
+                        externalVersions[idx].IsReferenced = true;
                     }
                     continue;
                 }
 
-                var refVersion = VersionRange.Parse(dependency.Value.Version);
+                // This package will be created in this Universe run.
+                var refVersion = VersionRange.Parse(dependencyVersion);
                 if (refVersion.IsFloating && refVersion.Float.Satisfies(package.PackageInfo.Version))
                 {
                     continue;
@@ -141,20 +158,33 @@ namespace RepoTasks
                 {
                     continue;
                 }
-
-                if (!solution.ShouldBuild)
+                else if (dependencyMap.TryGetValue(dependency.Key, out var externalDependency) &&
+                    externalDependency.Any(ext => ext.Version == dependencyVersion))
                 {
-                    reposThatShouldPatch.Add(Path.GetFileName(Path.GetDirectoryName(solution.FullPath)));
+                    // Project depends on external version of this package, not the version built in Universe. That's
+                    // fine in benchmark apps for example.
+                    continue;
                 }
 
-                inconsistentVersions.Add(new VersionMismatch
+                var shouldCascade = (solution.PatchPolicy & PatchPolicy.CascadeVersions) != 0;
+                if (!solution.ShouldBuild && !solution.IsPatching && shouldCascade)
                 {
-                    Solution = solution,
-                    Project = project,
-                    PackageId = dependency.Key,
-                    ActualVersion = dependency.Value.Version,
-                    ExpectedVersion = package.PackageInfo.Version,
-                });
+                    var repoName = Path.GetFileName(Path.GetDirectoryName(solution.FullPath));
+                    Log.LogError($"{repoName} should not be marked 'IsPatching=false'. Version changes in other repositories mean it should be patched to perserve cascading version upgrades.");
+
+                }
+
+                if (shouldCascade)
+                {
+                    inconsistentVersions.Add(new VersionMismatch
+                    {
+                        Solution = solution,
+                        Project = project,
+                        PackageId = dependency.Key,
+                        ActualVersion = dependency.Value.Version,
+                        ExpectedVersion = package.PackageInfo.Version,
+                    });
+                }
             }
 
             if (inconsistentVersions.Count != 0)
@@ -179,9 +209,13 @@ namespace RepoTasks
                 Log.LogError("Package versions are inconsistent. See build log for details.");
             }
 
-            foreach (var repo in reposThatShouldPatch)
+            foreach (var versions in dependencyMap.Values)
             {
-                Log.LogError($"{repo} should not be a 'ShippedRepository'. Version changes in other repositories mean it should be patched to perserve cascading version upgrades.");
+                foreach (var item in versions.Where(i => !i.IsReferenced))
+                {
+                    // See https://github.com/aspnet/Universe/wiki/Build-warning-and-error-codes#potentially-unused-external-dependency for details
+                    Log.LogMessage(MessageImportance.Normal, $"Potentially unused external dependency: {item.PackageId}/{item.Version}. See https://github.com/aspnet/Universe/wiki/Build-warning-and-error-codes for details.");
+                }
             }
         }
 
@@ -195,35 +229,52 @@ namespace RepoTasks
                         RootDir = Path.GetDirectoryName(s.FullPath)
                     };
 
-                    var packages = artifacts.Where(a => a.RepoName.Equals(repoName, StringComparison.OrdinalIgnoreCase)).ToList();
+                    var packages = artifacts
+                        .Where(a => string.Equals(a.RepoName, repoName, StringComparison.OrdinalIgnoreCase))
+                        .ToDictionary(p => p.PackageInfo.Id, p => p, StringComparer.OrdinalIgnoreCase);
 
                     foreach (var proj in s.Projects)
                     {
-                        var projectGroup = packages.Any(p => p.PackageInfo.Id == proj.PackageId)
-                            ? repo.Projects
-                            : repo.SupportProjects;
+                        IList<Project> projectGroup;
+                        if (packages.ContainsKey(proj.PackageId))
+                        {
+                            // this project is a package producer and consumer
+                            packages.Remove(proj.PackageId);
+                            projectGroup = repo.Projects;
+                        }
+                        else
+                        {
+                            // this project is a package consumer
+                            projectGroup = repo.SupportProjects;
+                        }
+
 
                         projectGroup.Add(new Project(proj.PackageId)
-                            {
-                                Repository = repo,
-                                PackageReferences = new HashSet<string>(proj
+                        {
+                            Repository = repo,
+                            PackageReferences = new HashSet<string>(proj
                                     .Frameworks
                                     .SelectMany(f => f.Dependencies.Keys)
                                     .Concat(proj.Tools.Select(t => t.Id)), StringComparer.OrdinalIgnoreCase),
-                            });
+                        });
+                    }
+
+                    foreach (var packageId in packages.Keys)
+                    {
+                        // these packages are produced from something besides a csproj. e.g. .Sources packages
+                        repo.Projects.Add(new Project(packageId) { Repository = repo });
                     }
 
                     return repo;
                 }).ToList();
 
-            var graph = GraphBuilder.Generate(repositories, StartGraphAt, Log);
+            var graph = GraphBuilder.Generate(repositories, Log);
             var repositoriesWithOrder = new List<(ITaskItem repository, int order)>();
             foreach (var repository in repositories)
             {
                 var graphNodeRepository = graph.FirstOrDefault(g => g.Repository.Name == repository.Name);
                 if (graphNodeRepository == null)
                 {
-                    // StartGraphAt was specified so the graph is incomplete.
                     continue;
                 }
 
@@ -232,13 +283,6 @@ namespace RepoTasks
                 repositoryTaskItem.SetMetadata("Order", order.ToString());
                 repositoryTaskItem.SetMetadata("RootPath", repository.RootDir);
                 repositoriesWithOrder.Add((repositoryTaskItem, order));
-            }
-
-            Log.LogMessage(MessageImportance.High, "Repository build order:");
-            foreach (var buildGroup in repositoriesWithOrder.GroupBy(r => r.order).OrderBy(g => g.Key))
-            {
-                var buildGroupRepos = buildGroup.Select(b => b.repository.ItemSpec);
-                Log.LogMessage(MessageImportance.High, $"{buildGroup.Key.ToString().PadLeft(2, ' ')}: {string.Join(", ", buildGroupRepos)}");
             }
 
             return repositoriesWithOrder

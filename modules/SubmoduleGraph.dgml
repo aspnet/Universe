@@ -1,7 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
+    <Node Id="AADIntegration" Label="AADIntegration" />
     <Node Id="Antiforgery" Label="Antiforgery" />
+    <Node Id="AuthSamples" Label="AuthSamples" />
     <Node Id="AzureIntegration" Label="AzureIntegration" />
     <Node Id="BasicMiddleware" Label="BasicMiddleware" />
     <Node Id="BrowserLink" Label="BrowserLink" />
@@ -19,6 +21,7 @@
     <Node Id="Hosting" Label="Hosting" />
     <Node Id="HtmlAbstractions" Label="HtmlAbstractions" />
     <Node Id="HttpAbstractions" Label="HttpAbstractions" />
+    <Node Id="HttpClientFactory" Label="HttpClientFactory" />
     <Node Id="HttpSysServer" Label="HttpSysServer" />
     <Node Id="Identity" Label="Identity" />
     <Node Id="IISIntegration" Label="IISIntegration" />
@@ -29,6 +32,7 @@
     <Node Id="Logging" Label="Logging" />
     <Node Id="MetaPackages" Label="MetaPackages" />
     <Node Id="Microsoft.Data.Sqlite" Label="Microsoft.Data.Sqlite" />
+    <Node Id="MusicStore" Label="MusicStore" />
     <Node Id="Mvc" Label="Mvc" />
     <Node Id="MvcPrecompilation" Label="MvcPrecompilation" />
     <Node Id="Options" Label="Options" />
@@ -40,18 +44,44 @@
     <Node Id="Security" Label="Security" />
     <Node Id="ServerTests" Label="ServerTests" />
     <Node Id="Session" Label="Session" />
+    <Node Id="SignalR" Label="SignalR" />
     <Node Id="StaticFiles" Label="StaticFiles" />
-    <Node Id="Testing" Label="Testing" />
     <Node Id="WebSockets" Label="WebSockets" />
   </Nodes>
   <Links>
+    <Link Source="AADIntegration" Target="BasicMiddleware" />
+    <Link Source="AADIntegration" Target="Configuration" />
+    <Link Source="AADIntegration" Target="DataProtection" />
+    <Link Source="AADIntegration" Target="Hosting" />
+    <Link Source="AADIntegration" Target="IISIntegration" />
+    <Link Source="AADIntegration" Target="KestrelHttpServer" />
+    <Link Source="AADIntegration" Target="Logging" />
+    <Link Source="AADIntegration" Target="Mvc" />
+    <Link Source="AADIntegration" Target="Razor" />
+    <Link Source="AADIntegration" Target="Security" />
+    <Link Source="AADIntegration" Target="StaticFiles" />
     <Link Source="Antiforgery" Target="Common" />
     <Link Source="Antiforgery" Target="DataProtection" />
     <Link Source="Antiforgery" Target="DependencyInjection" />
     <Link Source="Antiforgery" Target="HtmlAbstractions" />
     <Link Source="Antiforgery" Target="HttpAbstractions" />
     <Link Source="Antiforgery" Target="Logging" />
-    <Link Source="Antiforgery" Target="Testing" />
+    <Link Source="AuthSamples" Target="Common" />
+    <Link Source="AuthSamples" Target="Configuration" />
+    <Link Source="AuthSamples" Target="DataProtection" />
+    <Link Source="AuthSamples" Target="Diagnostics" />
+    <Link Source="AuthSamples" Target="EntityFrameworkCore" />
+    <Link Source="AuthSamples" Target="Hosting" />
+    <Link Source="AuthSamples" Target="Identity" />
+    <Link Source="AuthSamples" Target="IISIntegration" />
+    <Link Source="AuthSamples" Target="KestrelHttpServer" />
+    <Link Source="AuthSamples" Target="Logging" />
+    <Link Source="AuthSamples" Target="MetaPackages" />
+    <Link Source="AuthSamples" Target="Mvc" />
+    <Link Source="AuthSamples" Target="Razor" />
+    <Link Source="AuthSamples" Target="Security" />
+    <Link Source="AuthSamples" Target="StaticFiles" />
+    <Link Source="AzureIntegration" Target="Common" />
     <Link Source="AzureIntegration" Target="Configuration" />
     <Link Source="AzureIntegration" Target="EventNotification" />
     <Link Source="AzureIntegration" Target="Hosting" />
@@ -67,19 +97,17 @@
     <Link Source="BasicMiddleware" Target="KestrelHttpServer" />
     <Link Source="BasicMiddleware" Target="Logging" />
     <Link Source="BasicMiddleware" Target="Options" />
+    <Link Source="BrowserLink" Target="Common" />
     <Link Source="BrowserLink" Target="FileSystem" />
     <Link Source="BrowserLink" Target="Hosting" />
     <Link Source="BrowserLink" Target="HttpAbstractions" />
-    <Link Source="BrowserLink" Target="Testing" />
     <Link Source="Caching" Target="Common" />
     <Link Source="Caching" Target="Configuration" />
     <Link Source="Caching" Target="DependencyInjection" />
     <Link Source="Caching" Target="FileSystem" />
     <Link Source="Caching" Target="Options" />
-    <Link Source="Caching" Target="Testing" />
     <Link Source="Configuration" Target="Common" />
     <Link Source="Configuration" Target="FileSystem" />
-    <Link Source="Configuration" Target="Testing" />
     <Link Source="CORS" Target="Configuration" />
     <Link Source="CORS" Target="DependencyInjection" />
     <Link Source="CORS" Target="Hosting" />
@@ -89,13 +117,12 @@
     <Link Source="CORS" Target="Logging" />
     <Link Source="CORS" Target="Options" />
     <Link Source="DataProtection" Target="Common" />
+    <Link Source="DataProtection" Target="Configuration" />
     <Link Source="DataProtection" Target="DependencyInjection" />
     <Link Source="DataProtection" Target="Hosting" />
     <Link Source="DataProtection" Target="Logging" />
     <Link Source="DataProtection" Target="Options" />
-    <Link Source="DataProtection" Target="Testing" />
     <Link Source="DependencyInjection" Target="Common" />
-    <Link Source="DependencyInjection" Target="Testing" />
     <Link Source="Diagnostics" Target="Common" />
     <Link Source="Diagnostics" Target="DependencyInjection" />
     <Link Source="Diagnostics" Target="EntityFrameworkCore" />
@@ -107,20 +134,17 @@
     <Link Source="Diagnostics" Target="KestrelHttpServer" />
     <Link Source="Diagnostics" Target="Logging" />
     <Link Source="Diagnostics" Target="Options" />
-    <Link Source="Diagnostics" Target="Razor" />
     <Link Source="Diagnostics" Target="StaticFiles" />
-    <Link Source="Diagnostics" Target="Testing" />
     <Link Source="DotNetTools" Target="Common" />
     <Link Source="DotNetTools" Target="Configuration" />
-    <Link Source="DotNetTools" Target="Testing" />
     <Link Source="EntityFrameworkCore" Target="Caching" />
     <Link Source="EntityFrameworkCore" Target="Configuration" />
     <Link Source="EntityFrameworkCore" Target="DependencyInjection" />
+    <Link Source="EntityFrameworkCore" Target="Hosting" />
     <Link Source="EntityFrameworkCore" Target="Logging" />
     <Link Source="EntityFrameworkCore" Target="Microsoft.Data.Sqlite" />
-    <Link Source="EventNotification" Target="Testing" />
+    <Link Source="EventNotification" Target="Common" />
     <Link Source="FileSystem" Target="Common" />
-    <Link Source="FileSystem" Target="Testing" />
     <Link Source="Hosting" Target="Common" />
     <Link Source="Hosting" Target="Configuration" />
     <Link Source="Hosting" Target="DependencyInjection" />
@@ -129,28 +153,30 @@
     <Link Source="Hosting" Target="HttpAbstractions" />
     <Link Source="Hosting" Target="Logging" />
     <Link Source="Hosting" Target="Options" />
-    <Link Source="Hosting" Target="Testing" />
+    <Link Source="HtmlAbstractions" Target="Common" />
     <Link Source="HtmlAbstractions" Target="DependencyInjection" />
     <Link Source="HtmlAbstractions" Target="Options" />
-    <Link Source="HtmlAbstractions" Target="Testing" />
     <Link Source="HttpAbstractions" Target="Common" />
     <Link Source="HttpAbstractions" Target="DependencyInjection" />
     <Link Source="HttpAbstractions" Target="FileSystem" />
     <Link Source="HttpAbstractions" Target="Logging" />
     <Link Source="HttpAbstractions" Target="Options" />
-    <Link Source="HttpAbstractions" Target="Testing" />
+    <Link Source="HttpClientFactory" Target="Common" />
+    <Link Source="HttpClientFactory" Target="DependencyInjection" />
+    <Link Source="HttpClientFactory" Target="Logging" />
+    <Link Source="HttpClientFactory" Target="Options" />
+    <Link Source="HttpSysServer" Target="Common" />
     <Link Source="HttpSysServer" Target="Hosting" />
     <Link Source="HttpSysServer" Target="HttpAbstractions" />
     <Link Source="HttpSysServer" Target="Logging" />
-    <Link Source="HttpSysServer" Target="Testing" />
     <Link Source="Identity" Target="BasicMiddleware" />
     <Link Source="Identity" Target="Common" />
     <Link Source="Identity" Target="Configuration" />
     <Link Source="Identity" Target="DataProtection" />
     <Link Source="Identity" Target="DependencyInjection" />
     <Link Source="Identity" Target="Diagnostics" />
-    <Link Source="Identity" Target="DotNetTools" />
     <Link Source="Identity" Target="EntityFrameworkCore" />
+    <Link Source="Identity" Target="FileSystem" />
     <Link Source="Identity" Target="Hosting" />
     <Link Source="Identity" Target="HttpAbstractions" />
     <Link Source="Identity" Target="IISIntegration" />
@@ -159,33 +185,35 @@
     <Link Source="Identity" Target="Mvc" />
     <Link Source="Identity" Target="Options" />
     <Link Source="Identity" Target="Razor" />
-    <Link Source="Identity" Target="Scaffolding" />
     <Link Source="Identity" Target="Security" />
     <Link Source="Identity" Target="StaticFiles" />
-    <Link Source="Identity" Target="Testing" />
     <Link Source="IISIntegration" Target="BasicMiddleware" />
     <Link Source="IISIntegration" Target="Common" />
-    <Link Source="IISIntegration" Target="Configuration" />
     <Link Source="IISIntegration" Target="Hosting" />
     <Link Source="IISIntegration" Target="HttpAbstractions" />
+    <Link Source="IISIntegration" Target="HttpSysServer" />
     <Link Source="IISIntegration" Target="KestrelHttpServer" />
     <Link Source="IISIntegration" Target="Logging" />
     <Link Source="IISIntegration" Target="Options" />
     <Link Source="JavaScriptServices" Target="DependencyInjection" />
     <Link Source="JavaScriptServices" Target="Diagnostics" />
+    <Link Source="JavaScriptServices" Target="FileSystem" />
     <Link Source="JavaScriptServices" Target="Hosting" />
     <Link Source="JavaScriptServices" Target="IISIntegration" />
     <Link Source="JavaScriptServices" Target="KestrelHttpServer" />
     <Link Source="JavaScriptServices" Target="Logging" />
     <Link Source="JavaScriptServices" Target="Mvc" />
     <Link Source="JavaScriptServices" Target="StaticFiles" />
+    <Link Source="JavaScriptServices" Target="WebSockets" />
     <Link Source="JsonPatch" Target="Common" />
-    <Link Source="JsonPatch" Target="Testing" />
+    <Link Source="KestrelHttpServer" Target="Common" />
+    <Link Source="KestrelHttpServer" Target="Configuration" />
+    <Link Source="KestrelHttpServer" Target="DependencyInjection" />
     <Link Source="KestrelHttpServer" Target="Hosting" />
     <Link Source="KestrelHttpServer" Target="HttpAbstractions" />
     <Link Source="KestrelHttpServer" Target="Logging" />
     <Link Source="KestrelHttpServer" Target="Options" />
-    <Link Source="KestrelHttpServer" Target="Testing" />
+    <Link Source="Localization" Target="Common" />
     <Link Source="Localization" Target="Configuration" />
     <Link Source="Localization" Target="DependencyInjection" />
     <Link Source="Localization" Target="Hosting" />
@@ -195,11 +223,12 @@
     <Link Source="Localization" Target="Logging" />
     <Link Source="Localization" Target="Options" />
     <Link Source="Localization" Target="Routing" />
-    <Link Source="Localization" Target="Testing" />
+    <Link Source="Logging" Target="Common" />
     <Link Source="Logging" Target="Configuration" />
     <Link Source="Logging" Target="DependencyInjection" />
     <Link Source="Logging" Target="FileSystem" />
     <Link Source="Logging" Target="Options" />
+    <Link Source="MetaPackages" Target="BasicMiddleware" />
     <Link Source="MetaPackages" Target="Configuration" />
     <Link Source="MetaPackages" Target="Diagnostics" />
     <Link Source="MetaPackages" Target="Hosting" />
@@ -208,6 +237,22 @@
     <Link Source="MetaPackages" Target="Logging" />
     <Link Source="MetaPackages" Target="Routing" />
     <Link Source="MetaPackages" Target="StaticFiles" />
+    <Link Source="MusicStore" Target="Common" />
+    <Link Source="MusicStore" Target="Configuration" />
+    <Link Source="MusicStore" Target="Diagnostics" />
+    <Link Source="MusicStore" Target="EntityFrameworkCore" />
+    <Link Source="MusicStore" Target="Hosting" />
+    <Link Source="MusicStore" Target="HttpAbstractions" />
+    <Link Source="MusicStore" Target="HttpSysServer" />
+    <Link Source="MusicStore" Target="Identity" />
+    <Link Source="MusicStore" Target="Logging" />
+    <Link Source="MusicStore" Target="MetaPackages" />
+    <Link Source="MusicStore" Target="Mvc" />
+    <Link Source="MusicStore" Target="MvcPrecompilation" />
+    <Link Source="MusicStore" Target="Razor" />
+    <Link Source="MusicStore" Target="Security" />
+    <Link Source="MusicStore" Target="Session" />
+    <Link Source="MusicStore" Target="StaticFiles" />
     <Link Source="Mvc" Target="Antiforgery" />
     <Link Source="Mvc" Target="Caching" />
     <Link Source="Mvc" Target="Common" />
@@ -215,7 +260,6 @@
     <Link Source="Mvc" Target="CORS" />
     <Link Source="Mvc" Target="DependencyInjection" />
     <Link Source="Mvc" Target="Diagnostics" />
-    <Link Source="Mvc" Target="DotNetTools" />
     <Link Source="Mvc" Target="EventNotification" />
     <Link Source="Mvc" Target="FileSystem" />
     <Link Source="Mvc" Target="Hosting" />
@@ -233,7 +277,6 @@
     <Link Source="Mvc" Target="Security" />
     <Link Source="Mvc" Target="Session" />
     <Link Source="Mvc" Target="StaticFiles" />
-    <Link Source="Mvc" Target="Testing" />
     <Link Source="MvcPrecompilation" Target="Common" />
     <Link Source="MvcPrecompilation" Target="Configuration" />
     <Link Source="MvcPrecompilation" Target="Hosting" />
@@ -242,19 +285,17 @@
     <Link Source="MvcPrecompilation" Target="Mvc" />
     <Link Source="MvcPrecompilation" Target="Razor" />
     <Link Source="MvcPrecompilation" Target="Security" />
-    <Link Source="MvcPrecompilation" Target="Testing" />
     <Link Source="Options" Target="Common" />
     <Link Source="Options" Target="Configuration" />
     <Link Source="Options" Target="DependencyInjection" />
+    <Link Source="Proxy" Target="Common" />
     <Link Source="Proxy" Target="Hosting" />
     <Link Source="Proxy" Target="IISIntegration" />
     <Link Source="Proxy" Target="KestrelHttpServer" />
     <Link Source="Proxy" Target="Options" />
-    <Link Source="Proxy" Target="Testing" />
     <Link Source="Proxy" Target="WebSockets" />
     <Link Source="Razor" Target="Common" />
     <Link Source="Razor" Target="HtmlAbstractions" />
-    <Link Source="Razor" Target="Testing" />
     <Link Source="ResponseCaching" Target="Caching" />
     <Link Source="ResponseCaching" Target="Common" />
     <Link Source="ResponseCaching" Target="Hosting" />
@@ -271,7 +312,6 @@
     <Link Source="Routing" Target="KestrelHttpServer" />
     <Link Source="Routing" Target="Logging" />
     <Link Source="Routing" Target="Options" />
-    <Link Source="Routing" Target="Testing" />
     <Link Source="Scaffolding" Target="Common" />
     <Link Source="Scaffolding" Target="Configuration" />
     <Link Source="Scaffolding" Target="DependencyInjection" />
@@ -299,7 +339,6 @@
     <Link Source="Security" Target="Logging" />
     <Link Source="Security" Target="Options" />
     <Link Source="Security" Target="StaticFiles" />
-    <Link Source="Security" Target="Testing" />
     <Link Source="ServerTests" Target="BasicMiddleware" />
     <Link Source="ServerTests" Target="Configuration" />
     <Link Source="ServerTests" Target="Hosting" />
@@ -316,6 +355,22 @@
     <Link Source="Session" Target="KestrelHttpServer" />
     <Link Source="Session" Target="Logging" />
     <Link Source="Session" Target="Options" />
+    <Link Source="SignalR" Target="Common" />
+    <Link Source="SignalR" Target="Configuration" />
+    <Link Source="SignalR" Target="CORS" />
+    <Link Source="SignalR" Target="DependencyInjection" />
+    <Link Source="SignalR" Target="Diagnostics" />
+    <Link Source="SignalR" Target="Hosting" />
+    <Link Source="SignalR" Target="HttpAbstractions" />
+    <Link Source="SignalR" Target="IISIntegration" />
+    <Link Source="SignalR" Target="KestrelHttpServer" />
+    <Link Source="SignalR" Target="Logging" />
+    <Link Source="SignalR" Target="Options" />
+    <Link Source="SignalR" Target="Routing" />
+    <Link Source="SignalR" Target="Security" />
+    <Link Source="SignalR" Target="StaticFiles" />
+    <Link Source="SignalR" Target="WebSockets" />
+    <Link Source="StaticFiles" Target="Common" />
     <Link Source="StaticFiles" Target="FileSystem" />
     <Link Source="StaticFiles" Target="Hosting" />
     <Link Source="StaticFiles" Target="HtmlAbstractions" />
@@ -324,7 +379,7 @@
     <Link Source="StaticFiles" Target="IISIntegration" />
     <Link Source="StaticFiles" Target="KestrelHttpServer" />
     <Link Source="StaticFiles" Target="Logging" />
-    <Link Source="StaticFiles" Target="Testing" />
+    <Link Source="WebSockets" Target="Common" />
     <Link Source="WebSockets" Target="Configuration" />
     <Link Source="WebSockets" Target="Diagnostics" />
     <Link Source="WebSockets" Target="Hosting" />
@@ -335,6 +390,5 @@
     <Link Source="WebSockets" Target="Logging" />
     <Link Source="WebSockets" Target="Options" />
     <Link Source="WebSockets" Target="StaticFiles" />
-    <Link Source="WebSockets" Target="Testing" />
   </Links>
 </DirectedGraph>

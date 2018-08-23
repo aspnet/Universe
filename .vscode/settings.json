@@ -1,9 +1,10 @@
 {
-  "files.associations": {
-    "*.*proj": "xml",
-    "*.targets": "xml",
-    "*.props": "xml"
-  },
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.associations": {
+        "*.*proj": "xml",
+        "*.props": "xml",
+        "*.targets": "xml",
+        "*.tasks": "xml"
+    }
 }

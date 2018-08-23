@@ -1,26 +1,27 @@
-<Project InitialTargets="GenerateKoreBuildPropsFile">
-  <Import Project="push.targets" />
+<Project>
+  <Import Project="RepositoryBuild.targets" />
+  <Import Project="PackageArchive.targets" />
+  <Import Project="AzureIntegration.targets" />
+  <Import Project="SharedFx.targets" />
+  <Import Project="SharedFxInstaller.targets" />
+  <Import Project="Publish.targets" />
   <Import Project="GenerateCode.targets" />
 
+  <!-- Workaround for #1014 -->
+  <Import Project="buildorder.props" Condition="$([MSBuild]::IsOSUnixLike())" />
+
   <PropertyGroup>
-    <SubmoduleRoot>$(RepositoryRoot)modules\</SubmoduleRoot>
-    <_DependencyBuildDirectory>$(RepositoryRoot).deps\build\</_DependencyBuildDirectory>
-    <_DependencyPackagesDirectory>$(_DependencyBuildDirectory)</_DependencyPackagesDirectory>
+    <GeneratedPackageVersionPropsPath>$(IntermediateDir)dependencies.g.props</GeneratedPackageVersionPropsPath>
+    <GeneratedRestoreSourcesPropsPath>$(IntermediateDir)sources.g.props</GeneratedRestoreSourcesPropsPath>
+    <GeneratedBrandingPropsPath>$(IntermediateDir)branding.g.props</GeneratedBrandingPropsPath>
 
-    <_RepositoryBuildTargets Condition="'$(_RepositoryBuildTargets)'=='' AND '$(CompileOnly)'=='true'">/t:Package /t:VerifyPackages</_RepositoryBuildTargets>
-    <_RepositoryBuildTargets Condition="'$(_RepositoryBuildTargets)'==''">/t:Verify</_RepositoryBuildTargets>
-    <!-- For external packages that come from feeds will mirrored to aspnetcore feeds. -->
-    <IntermediateMirrorPackageDir>$(IntermediateDir)mirror\</IntermediateMirrorPackageDir>
-    <!-- For external packages that come from feeds we don't mirror. -->
-    <IntermediateExternalPackageDir>$(IntermediateDir)ext\</IntermediateExternalPackageDir>
-    <GeneratedPackageVersionPropsPath>$(IntermediateDir)dependencies.props</GeneratedPackageVersionPropsPath>
-    <GeneratedRestoreSourcesPropsPath>$(IntermediateDir)sources.props</GeneratedRestoreSourcesPropsPath>
-
-    <PrepareDependsOn>$(PrepareDependsOn);PrepareOutputPath</PrepareDependsOn>
+    <PrepareDependsOn>SetTeamCityBuildNumberToVersion;$(PrepareDependsOn);VerifyPackageArtifactConfig;VerifyExternalDependencyConfig;PrepareOutputPaths</PrepareDependsOn>
     <CleanDependsOn>$(CleanDependsOn);CleanArtifacts;CleanUniverseArtifacts</CleanDependsOn>
-    <RestoreDependsOn>$(RestoreDependsOn);RestoreExternalDependencies</RestoreDependsOn>
-    <PackageDependsOn>$(PackageDependsOn);BuildAllMetapackage;SplitPackages</PackageDependsOn>
-    <VerifyDependsOn>$(VerifyDependsOn);VerifyCoherentVersions</VerifyDependsOn>
+    <RestoreDependsOn>$(RestoreDependsOn);InstallDotNet</RestoreDependsOn>
+    <CompileDependsOn>$(CompileDependsOn);BuildRepositories</CompileDependsOn>
+    <PackageDependsOn Condition="'$(TestOnly)' != 'true'">$(PackageDependsOn);BuildMetapackages;CheckExpectedPackagesExist</PackageDependsOn>
+    <TestDependsOn>$(TestDependsOn);_TestRepositories</TestDependsOn>
+    <GetArtifactInfoDependsOn>$(GetArtifactInfoDependsOn);ResolveRepoInfo</GetArtifactInfoDependsOn>
   </PropertyGroup>
 
   <Target Name="GenerateKoreBuildPropsFile">
@@ -31,19 +32,160 @@
     <WriteLinesToFile File="$(IntermediateDir)korebuild.g.props" Lines="@(_KoreBuildPropsFile)" Overwrite="true" />
   </Target>
 
-  <Target Name="PrepareOutputPath">
+  <Target Name="PrepareOutputPaths">
     <MakeDir Directories="$(ArtifactsDir);$(BuildDir)" />
   </Target>
 
-  <Target Name="GeneratePropsFiles" DependsOnTargets="ResolveRepoInfo">
+  <Target Name="ResolveRepoInfo" DependsOnTargets="_PrepareRepositories;GetMetapackageArtifactInfo;GetLineupPackageInfo">
+    <!-- We need to pass the NETCoreApp package versions to msbuild so that it doesn't complain about us using a different one than it was restored against.  -->
+    <PropertyGroup>
+      <DesignTimeBuildProps>MicrosoftNETCoreAppPackageVersion=$(MicrosoftNETCoreAppPackageVersion);</DesignTimeBuildProps>
+      <DesignTimeBuildProps>$(DesignTimeBuildProps);MicrosoftNETCoreApp22PackageVersion=$(MicrosoftNETCoreApp22PackageVersion);</DesignTimeBuildProps>
+      <DesignTimeBuildProps>$(DesignTimeBuildProps);MicrosoftNETCoreApp21PackageVersion=$(MicrosoftNETCoreApp21PackageVersion);</DesignTimeBuildProps>
+      <DesignTimeBuildProps>$(DesignTimeBuildProps);MicrosoftNETCoreApp20PackageVersion=$(MicrosoftNETCoreApp20PackageVersion);</DesignTimeBuildProps>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetArtifactInfo"
+             Properties="$(DesignTimeBuildProps);RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);DesignTimeBuild=true"
+             ContinueOnError="WarnAndContinue"
+             Condition="'%(Repository.Identity)' != ''">
+      <Output TaskParameter="TargetOutputs" ItemName="ArtifactInfo" />
+    </MSBuild>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="ResolveSolutions"
+             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
+             ContinueOnError="WarnAndContinue"
+             Condition="'%(Repository.Identity)' != ''">
+      <Output TaskParameter="TargetOutputs" ItemName="Solution" Condition="'%(Repository.Build)' == 'true'" />
+      <Output TaskParameter="TargetOutputs" ItemName="_NoBuildSolution" Condition="'%(Repository.Build)' != 'true'" />
+    </MSBuild>
+
+    <!--
+      Analyze what was shipped in these repos.
+      This is required so we can verify that cascading versions are consistent.
+    -->
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetArtifactInfo"
+             Properties="$(DesignTimeBuildProps);RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=true;DesignTimeBuild=true"
+             ContinueOnError="WarnAndContinue"
+             Condition="'%(ShippedRepository.Identity)' != ''">
+      <Output TaskParameter="TargetOutputs" ItemName="ShippedArtifactInfo" />
+    </MSBuild>
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="ResolveSolutions"
+             Properties="RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
+             ContinueOnError="WarnAndContinue"
+             Condition="'%(ShippedRepository.Identity)' != ''">
+      <Output TaskParameter="TargetOutputs" ItemName="_ShippedSolution" />
+    </MSBuild>
+
+    <ItemGroup>
+      <_Temp Remove="@(_Temp)" />
+      <_Temp Include="@(PackageArtifact)" />
+      <PackageArtifact Remove="@(PackageArtifact)" />
+    </ItemGroup>
+
+    <!-- Join required because shipping category is stored in universe (PackageArtifact), but information about package ID and version comes from repos (ArtifactInfo). -->
+    <RepoTasks.JoinItems
+      Left="@(_Temp)"
+      LeftMetadata="*"
+      Right="@(ArtifactInfo->WithMetadataValue('ArtifactType','NuGetPackage'));@(ShippedArtifactInfo->WithMetadataValue('ArtifactType','NuGetPackage'))"
+      RightKey="PackageId"
+      RightMetadata="Version">
+      <Output TaskParameter="JoinResult" ItemName="PackageArtifact" />
+    </RepoTasks.JoinItems>
+
+    <ItemGroup>
+      <_PackageArtifactWithoutMatchingInfo Include="@(_Temp)" Exclude="@(PackageArtifact)" />
+    </ItemGroup>
+
+    <Error Text="Could not detect version information for package id:%0A * @(_PackageArtifactWithoutMatchingInfo, '%0A * ')"
+           Condition="@(_PackageArtifactWithoutMatchingInfo->Count()) != 0" />
+
+    <ItemGroup>
+      <!-- Adjust the list of what is considered external vs locally built. -->
+      <ExternalDependency Include="%(ShippedArtifactInfo.PackageId)" Condition="'%(ShippedArtifactInfo.ArtifactType)' == 'NuGetPackage'">
+        <Version>%(ShippedArtifactInfo.Version)</Version>
+      </ExternalDependency>
+
+      <!-- capture the original list of PackageArtifacts -->
+      <_PackageArtifactSpec Include="@(PackageArtifact)" />
+
+      <PackageArtifact Remove="%(ShippedArtifactInfo.PackageId)" Condition="'%(ShippedArtifactInfo.ArtifactType)' == 'NuGetPackage'" />
+
+      <Solution Update="@(Solution)" Build="true" IsPatching="true" />
+      <_ShippedSolution Update="@(_ShippedSolution)" Build="false" IsPatching="false" />
+      <_NoBuildSolution Update="@(_NoBuildSolution)" Build="false" />
+      <Solution Include="@(_NoBuildSolution);@(_ShippedSolution)" />
+    </ItemGroup>
+
+    <Error Text="No solutions were found in '$(SubmoduleRoot)'. Did you forget to clone the submodules? Run `git submodule update --init`." Condition="@(Solution->Count()) == 0" />
+  </Target>
+
+  <Target Name="GetLineupPackageInfo">
+    <ItemGroup>
+      <ArtifactInfo Include="$(BuildDir)Internal.AspNetCore.Universe.Lineup.$(PackageVersion).nupkg">
+        <ArtifactType>NuGetPackage</ArtifactType>
+        <PackageId>Internal.AspNetCore.Universe.Lineup</PackageId>
+        <Version>$(PackageVersion)</Version>
+        <Category>noship</Category>
+        <IsLineup>true</IsLineup>
+      </ArtifactInfo>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GeneratePropsFiles" DependsOnTargets="PrepareOutputPaths;GetArtifactInfo">
     <ItemGroup>
       <_LineupPackages Include="@(ExternalDependency)" />
       <_LineupPackages Include="%(ArtifactInfo.PackageId)" Version="%(ArtifactInfo.Version)" Condition=" '%(ArtifactInfo.ArtifactType)' == 'NuGetPackage' " />
+
+      <_RestoreSources Include="$(DependencyPackageDir)" Condition="'$(DependencyPackageDir)' != '' AND Exists('$(DependencyPackageDir)')" />
+      <_RestoreSources Include="$(SignedDependencyPackageDir)" Condition="'$(SignedDependencyPackageDir)' != '' AND Exists('$(SignedDependencyPackageDir)')" />
+      <_RestoreSources Include="$(BuildDir)" />
+      <_RestoreSources Include="$(RestoreSources)" />
     </ItemGroup>
 
-    <RepoTasks.GeneratePackageVersionPropsFile
+    <GeneratePackageVersionPropsFile
       Packages="@(_LineupPackages)"
-      OutputPath="$(ArtifactsDir)dependencies.props" />
+      OutputPath="$(GeneratedPackageVersionPropsPath)" />
+
+    <Copy SourceFiles="$(GeneratedPackageVersionPropsPath)" DestinationFolder="$(ArtifactsDir)" />
+
+    <RepoTasks.GenerateRestoreSourcesPropsFile
+      Sources="@(_RestoreSources)"
+      OutputPath="$(GeneratedRestoreSourcesPropsPath)" />
+
+    <PropertyGroup>
+      <!-- Generate an MSBuild file that can be imported and used by Windows Installer builds to keep our versions consistent. -->
+      <BrandingPropsContent>
+<![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AspNetCoreMajorVersion>$(AspNetCoreMajorVersion)</AspNetCoreMajorVersion>
+    <AspNetCoreMinorVersion>$(AspNetCoreMinorVersion)</AspNetCoreMinorVersion>
+    <AspNetCorePatchVersion>$(AspNetCorePatchVersion)</AspNetCorePatchVersion>
+    <AspNetCorePrereleaseVersionLabel>$(PrereleaseVersionLabel)</AspNetCorePrereleaseVersionLabel>
+    <AspNetCoreBuildNumber>$(BuildNumber)</AspNetCoreBuildNumber>
+    <AspNetCoreBrandingVersion>$(PackageBrandingVersion)</AspNetCoreBrandingVersion>
+  </PropertyGroup>
+</Project>
+]]>
+      </BrandingPropsContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(GeneratedBrandingPropsPath)" Overwrite="true" Lines="$(BrandingPropsContent)"/>
+
+    <Copy SourceFiles="$(GeneratedPackageVersionPropsPath);$(GeneratedBrandingPropsPath)" DestinationFolder="$(ArtifactsDir)" />
+
+    <PackNuSpec NuSpecPath="$(MSBuildThisFileDirectory)lineups\Internal.AspNetCore.Universe.Lineup.nuspec"
+                DestinationFolder="$(BuildDir)"
+                Overwrite="true"
+                Properties="version=$(PackageVersion);dependenciesPropsFile=$(GeneratedPackageVersionPropsPath);brandingPropsFile=$(GeneratedBrandingPropsPath)">
+      <Output TaskParameter="Packages" ItemName="LineupPackage" />
+    </PackNuSpec>
   </Target>
 
   <Target Name="CleanUniverseArtifacts">
@@ -51,73 +193,108 @@
   </Target>
 
   <Target Name="_PrepareRepositories">
+    <ItemGroup Condition="'$(KOREBUILD_REPOSITORY_INCLUDE)'!=''">
+      <_RepositoriesToInclude Include="$(KOREBUILD_REPOSITORY_INCLUDE)" />
+      <Repository Update="@(Repository)" Build="false" />
+      <Repository
+        Update="@(Repository)"
+        Condition="'@(Repository)'=='@(_RepositoriesToInclude)' AND '%(Identity)'!=''"
+        Build="true" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(KOREBUILD_REPOSITORY_EXCLUDE)'!=''">
+      <_RepositoriesToExclude Include="$(KOREBUILD_REPOSITORY_EXCLUDE)" />
+      <Repository
+        Update="@(Repository)"
+        Condition="'@(Repository)'=='@(_RepositoriesToExclude)' AND '%(Identity)'!=''"
+        Build="false" />
+    </ItemGroup>
+
+    <Error Text="KOREBUILD_REPOSITORY_EXCLUDE AND KOREBUILD_REPOSITORY_INCLUDE are specified."
+      Condition="'$(KOREBUILD_REPOSITORY_INCLUDE)' != '' AND '$(KOREBUILD_REPOSITORY_EXCLUDE)' != ''" />
+
     <ItemGroup>
       <Repository Update="%(Identity)" RootPath="$(SubmoduleRoot)%(Identity)\" />
+      <ShippedRepository Update="%(Identity)" RootPath="$(SubmoduleRoot)%(Identity)\" Condition="'%(Identity)' != ''" />
     </ItemGroup>
   </Target>
 
-  <Target Name="ResolveRepoInfo" DependsOnTargets="_PrepareRepositories">
+  <Target Name="BuildRepositories"
+     DependsOnTargets="_PrepareRepositories;GeneratePropsFiles;ComputeGraph;_BuildRepositories" />
 
-    <Error Text="%(Repository.RootPath) does not exist. Did you forget to clone the submodules? Run `git submodules update`." Condition="!Exists(%(Repository.RootPath))" />
-
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="GetArtifactInfo"
-             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=%(Repository.UseBuildCache)"
-             ContinueOnError="WarnAndContinue">
-      <Output TaskParameter="TargetOutputs" ItemName="ArtifactInfo" />
-    </MSBuild>
-
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="ResolveSolutions"
-             Properties="RepositoryRoot=%(Repository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=%(Repository.UseBuildCache)"
-             ContinueOnError="WarnAndContinue">
-      <Output TaskParameter="TargetOutputs" ItemName="Solution" />
-    </MSBuild>
-
-
-    <ItemGroup>
-      <Solution Update="@(Solution)" Build="true" />
-      <_NoBuildSolution Update="@(_NoBuildSolution)" Build="false" />
-      <Solution Include="@(_NoBuildSolution)" />
-    </ItemGroup>
-
-    <Error Text="No solutions were found in '$(SubmoduleRoot)'" Condition="@(Solution->Count()) == 0" />
+  <Target Name="ListExpectedPackages" DependsOnTargets="ResolveRepoInfo">
+    <WriteLinesToFile File="$(RepositoryRoot)artifacts\packages.csv" Lines="PackageId,Version;@(ArtifactInfo->WithMetadataValue('ArtifactType', 'NuGetPackage')->'%(PackageId),%(Version)')" Overwrite="true" />
   </Target>
 
   <Target Name="ComputeGraph" DependsOnTargets="ResolveRepoInfo;GeneratePropsFiles">
-    <RepoTasks.AnalyzeBuildGraph
+    <RepoTasks.CheckRepoGraph Condition=" ! $([MSBuild]::IsOSUnixLike())"
       Solutions="@(Solution)"
-      Artifacts="@(ArtifactInfo)"
+      Artifacts="@(ArtifactInfo);@(ShippedArtifactInfo)"
+      Repositories="@(Repository);@(ShippedRepository)"
+      Properties="Configuration=$(Configuration);BuildNumber=$(BuildNumber);DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath);DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath)" />
+
+    <ItemGroup>
+      <_UndeclaredPackageArtifact Include="%(ArtifactInfo.PackageId)" Condition="'%(ArtifactInfo.ArtifactType)' == 'NuGetPackage'" />
+      <_UndeclaredPackageArtifact Remove="@(PackageArtifact)" />
+    </ItemGroup>
+
+    <Error Text="Undeclared package artifacts. Add these to artifacts.props:%0A  - @(_UndeclaredPackageArtifact, '%0A  - ')"
+      Condition=" @(_UndeclaredPackageArtifact->Count()) != 0 " />
+
+    <!-- Skipped to workaround #1014. The order is hardcoded in buildorder.props -->
+    <RepoTasks.AnalyzeBuildGraph Condition=" ! $([MSBuild]::IsOSUnixLike())"
+      Solutions="@(Solution)"
+      Artifacts="@(ArtifactInfo);@(ShippedArtifactInfo)"
+      Repositories="@(Repository);@(ShippedRepository)"
       Dependencies="@(ExternalDependency)"
-      StartGraphAt="$(BuildGraphOf)"
       Properties="Configuration=$(Configuration);BuildNumber=$(BuildNumber);DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath);DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath)">
       <Output TaskParameter="RepositoryBuildOrder" ItemName="RepositoryBuildOrder" />
     </RepoTasks.AnalyzeBuildGraph>
+
+    <Message Text="Repository build order:" Importance="high" />
+    <Message Text="%(RepositoryBuildOrder.Order). @(RepositoryBuildOrder, ', ')" Importance="high" />
   </Target>
 
-  <Target Name="SplitPackages">
-    <ItemGroup>
-      <PackageArtifactFile Include="$(BuildDir)*.nupkg" />
-      <ExternalDependencyPackage Include="@(ExternalDependency->WithMetadataValue('Mirror', 'true'))" Category="mirror" />
-      <_MirroredPackageFiles Include="$(IntermediateMirrorPackageDir)*.nupkg" />
-    </ItemGroup>
+  <Target Name="VerifyPackageArtifactConfig">
+    <Error Text="Invalid configuration of %(PackageArtifact.Identity). PackageArtifact must have the 'Category' metadata."
+           Condition="'%(PackageArtifact.Category)' == '' " />
 
-    <RepoTasks.CopyPackagesToSplitFolders
-      Packages="@(PackageArtifact);@(ExternalDependencyPackage)"
-      Files="@(PackageArtifactFile);@(_MirroredPackageFiles)"
-      DestinationFolder="$(ArtifactsDir)"
-      Overwrite="true" />
+    <Error Text="Invalid configuration of %(PackageArtifact.Identity). Packages marked as LZMA='true' must be Category='ship'."
+           Condition="'%(PackageArtifact.Category)' != 'ship' AND '%(PackageArtifact.LZMA)' == 'true' " />
+
+ 	  <Error Text="Invalid configuration of %(PackageArtifact.Identity). Packages marked as AppMetapackage='true' must be Category='ship'."
+           Condition="'%(PackageArtifact.Category)' != 'ship' AND '%(PackageArtifact.AppMetapackage)' == 'true' " />
+
+    <Error Text="Invalid configuration of %(PackageArtifact.Identity). Packages marked as AllMetapackage='true' must be Category='ship'."
+           Condition="'%(PackageArtifact.Category)' != 'ship' AND '%(PackageArtifact.AllMetapackage)' == 'true' " />
+
+    <Error Text="Invalid configuration of %(PackageArtifact.Identity). Packages marked as AppMetapackage='true' must also be marked as AllMetapackage='true'."
+           Condition="'%(PackageArtifact.AppMetapackage)' == 'true' AND '%(PackageArtifact.AllMetapackage)' != 'true' " />
   </Target>
 
-  <Target Name="VerifyCoherentVersions" DependsOnTargets="ResolveRepoInfo">
+  <Target Name="VerifyExternalDependencyConfig">
+    <RepoTasks.CheckVersionOverrides DotNetPackageVersionPropsPath="$(DotNetPackageVersionPropsPath)"
+      DependenciesFile="$(MSBuildThisFileDirectory)dependencies.props"
+      Condition="'$(DotNetPackageVersionPropsPath)' != ''" />
+
+    <Error Text="Missing Version metadata for the following external dependencies: %0A - @(ExternalDependency->WithMetadataValue('Version', ''), '%0A - '). "
+           Condition=" @(ExternalDependency->WithMetadataValue('Version', '')->Count()) != 0 " />
+  </Target>
+
+  <Target Name="CheckUniverse"
+    DependsOnTargets="ComputeGraph;VerifyPackageArtifactConfig;VerifyAllReposHaveNuGetPackageVerifier" />
+
+  <Target Name="CheckExpectedPackagesExist">
     <ItemGroup>
-      <ShippingPackageFiles Include="$(ArtifactsDir)ship\*.nupkg" />
-      <ShippedExternalDependency Include="%(ShippedArtifactInfo.PackageId)" Version="%(Version)" />
+      <PackageArtifactFile Include="$(BuildDir)*.nupkg" Exclude="$(BuildDir)*.symbols.nupkg" />
     </ItemGroup>
 
-    <RepoTasks.VerifyCoherentVersions
-      PackageFiles="@(ShippingPackageFiles)"
-      ExternalDependencies="@(ExternalDependency);@(ShippedExternalDependency)" />
+    <RepoTasks.CheckExpectedPackagesExist Packages="@(PackageArtifact)" Files="@(PackageArtifactFile)" />
+  </Target>
+
+  <Target Name="VerifyAllReposHaveNuGetPackageVerifier" DependsOnTargets="_PrepareRepositories">
+    <Error Condition="'%(Repository.Identity)' != '' AND !Exists('%(Repository.RootPath)NuGetPackageVerifier.json')"
+           Text="Repository %(Repository.Identity) is missing NuGetPackageVerifier.json. Expected file to exist in %(Repository.RootPath)NuGetPackageVerifier.json" />
   </Target>
 
 </Project>

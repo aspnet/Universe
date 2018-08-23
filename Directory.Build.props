@@ -8,9 +8,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
     <RestorePackagesPath>$(MSBuildThisFileDirectory)obj\nuget\</RestorePackagesPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath>$(MSBuildThisFileDirectory)bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$(RepositoryRoot)artifacts\</ArtifactsDir>
+    <ArtifactsObjDir>$(ArtifactsDir)obj\</ArtifactsObjDir>
+    <ArtifactsConfigurationDir>$(ArtifactsDir)$(Configuration)\</ArtifactsConfigurationDir>
+    <ArtifactsBinDir>$(ArtifactsConfigurationDir)bin\</ArtifactsBinDir>
+    <PackageOutputPath>$(ArtifactsConfigurationDir)packages\</PackageOutputPath>
   </PropertyGroup>
 
   <ImportGroup Condition="'$(MSBuildProjectExtension)' != '.csproj'">
@@ -19,5 +25,9 @@
     <Import Project="build\tasks\RepoTasks.tasks" />
     <Import Project="build\targets\Universe.Common.props" />
     <Import Project="build\targets\Repository.Common.props" Condition="'$(MSBuildProjectExtension)' == '.repoproj'" />
+    <Import Project="eng\targets\Wix.Common.props"  Condition="'$(MSBuildProjectExtension)' == '.wixproj'" />
   </ImportGroup>
+
+  <Import Project="build\external-dependencies.props" />
+  <Import Project="build\sources.props" />
 </Project>

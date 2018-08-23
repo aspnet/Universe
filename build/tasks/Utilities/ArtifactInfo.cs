@@ -27,7 +27,7 @@ namespace RepoTasks.Utilities
                     info = new Package { PackageInfo = GetPackageInfo(item), IsSymbolsArtifact = true };
                     break;
                 default:
-                    throw new InvalidDataException($"Unrecognized artifact type: {item.GetMetadata("ArtifactType")} for artifact {item.ItemSpec}");
+                    return UnknownType.Singleton;
             }
 
             info.RepositoryRoot = item.GetMetadata("RepositoryRoot")?.TrimEnd(new [] { '\\', '/' });
@@ -42,6 +42,12 @@ namespace RepoTasks.Utilities
 
         public string RepositoryRoot { get; private set; }
         public string RepoName { get; private set; }
+
+        public class UnknownType : ArtifactInfo
+        {
+           private UnknownType() { }
+           public static UnknownType Singleton { get; } = new UnknownType();
+        }
 
         public class Package : ArtifactInfo
         {

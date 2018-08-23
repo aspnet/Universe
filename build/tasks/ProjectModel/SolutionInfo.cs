@@ -9,7 +9,7 @@ namespace RepoTasks.ProjectModel
 {
     internal class SolutionInfo
     {
-        public SolutionInfo(string fullPath, string configName, IReadOnlyList<ProjectInfo> projects, bool shouldBuild)
+        public SolutionInfo(string fullPath, string configName, IReadOnlyList<ProjectInfo> projects, bool shouldBuild, bool isPatching)
         {
             if (string.IsNullOrEmpty(fullPath))
             {
@@ -23,9 +23,11 @@ namespace RepoTasks.ProjectModel
 
             Directory = Path.GetDirectoryName(fullPath);
             FullPath = fullPath;
+            Directory = Path.GetDirectoryName(fullPath);
             ConfigName = configName;
             Projects = projects ?? throw new ArgumentNullException(nameof(projects));
             ShouldBuild = shouldBuild;
+            IsPatching = isPatching;
 
             foreach (var proj in Projects)
             {
@@ -35,8 +37,11 @@ namespace RepoTasks.ProjectModel
 
         public string Directory { get; }
         public string FullPath { get; }
+        public string Directory { get; }
         public string ConfigName { get; }
         public IReadOnlyList<ProjectInfo> Projects { get; }
         public bool ShouldBuild { get; }
+        public bool IsPatching { get; }
+        public PatchPolicy PatchPolicy { get; set; }
     }
 }

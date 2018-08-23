@@ -85,12 +85,14 @@ namespace RepoTasks.ProjectModel
                 }
 
                 bool.TryParse(solution.GetMetadata("Build"), out var shouldBuild);
+                bool.TryParse(solution.GetMetadata("IsPatching"), out var isPatching);
 
                 var solutionInfo = new SolutionInfo(
                     solutionFile,
                     configName,
                     projects.ToArray(),
-                    shouldBuild);
+                    shouldBuild,
+                    isPatching);
 
                 _buildEngine.RegisterTaskObject(key, solutionInfo, RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
 

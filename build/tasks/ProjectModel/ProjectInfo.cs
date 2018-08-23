@@ -40,6 +40,8 @@ namespace RepoTasks.ProjectModel
         public string PackageVersion { get; }
         public bool IsPackable { get; }
 
+        public SolutionInfo SolutionInfo { get; set; }
+
         public IReadOnlyList<ProjectFrameworkInfo> Frameworks { get; }
         public IReadOnlyList<DotNetCliReferenceInfo> Tools { get; }
         public SolutionInfo SolutionInfo { get; internal set; }
